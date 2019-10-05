@@ -17,7 +17,7 @@ let commands = [];
 loadCommands(`${__dirname}/commands`);
 client.on("ready", () => {
     console.log("Ready!!");
-    client.user.setActivity("Danil suffers", { type: "WATCHING" });
+    client.user.setActivity("Danil TESTING", { type: "WATCHING" });
 });
 client.on("message", msg => {
     if (msg.author.bot) {
