@@ -71,4 +71,4 @@ for (const commandName of ConfigFile.config.commands as string[]){
 
  }
 
-client.login(ConfigFile.config.token);
+client.login(process.env.DISCORD_TOKEN);
