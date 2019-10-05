@@ -2,7 +2,7 @@ import volume from "./commands/volume";
 
 export let config = {
 
-    "token": "testing",
+    "token": "test",
     "prefix": "~",
     "commands":[
         "kick",
