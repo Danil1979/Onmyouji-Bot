@@ -16,7 +16,7 @@ client.on("ready", ()=>{
     //when bot is ready
     console.log("Ready!!");
     //bot activity
-    client.user.setActivity("Danil suffers", {type:"WATCHING" });
+    client.user.setActivity("Danil TESTING", {type:"WATCHING" });
 })
 client.on("message",msg=>{
 
