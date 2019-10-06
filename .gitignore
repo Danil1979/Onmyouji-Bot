@@ -1,3 +1,2 @@
-.token.ts
-dist/token.js
-src/token.ts
+
+dist/.env

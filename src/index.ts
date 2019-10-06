@@ -1,7 +1,7 @@
 import * as Discord from "discord.js";
 import * as ConfigFile from "./config";
 import { IBotCommand } from "./api";
-import * as tokenFile from "./token";
+require('dotenv').config();
 var ffmpeg = require('ffmpeg-static');
 
 
@@ -70,4 +70,4 @@ for (const commandName of ConfigFile.config.commands as string[]){
 
  }
 
-client.login(process.env.DISCORD_TOKEN||tokenFile.config.token);
+client.login(process.env.DISCORD_TOKEN);
