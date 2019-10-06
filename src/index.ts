@@ -2,6 +2,7 @@ import * as Discord from "discord.js";
 import * as ConfigFile from "./config";
 import { IBotCommand } from "./api";
 require('dotenv').config();
+
 var ffmpeg = require('ffmpeg-static');
 
 
