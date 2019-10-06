@@ -1,10 +1,9 @@
 import * as Discord from "discord.js";
 import * as ConfigFile from "./config";
 import { IBotCommand } from "./api";
-// import * as Youtube from "simple-youtube-api";
-
+import * as tokenFile from "./token";
 var ffmpeg = require('ffmpeg-static');
-// import * as ytdl from ''
+
 
 const client: Discord.Client = new Discord.Client();
 
@@ -71,4 +70,4 @@ for (const commandName of ConfigFile.config.commands as string[]){
 
  }
 
-client.login(process.env.DISCORD_TOKEN);
+client.login(process.env.DISCORD_TOKEN||tokenFile.config.token);
