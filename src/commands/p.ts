@@ -19,29 +19,24 @@ client: Discord.Client
 ): Promise<void> {
     msgObject.delete();
     const voiceConnection:Discord.VoiceConnection = msgObject.guild.voiceConnection;
-if (args[0]) {
-    const play = require("./play").default;
-    const playCommand = new play() as IBotCommand;
-    playCommand.runCommand(args, msgObject, client);
-    return;
-} else {
-    if(!voiceConnection){
-        return;
+    try{
+        if (args[0]) {
+            const play = require("./play").default;
+            const playCommand = new play() as IBotCommand;
+            playCommand.runCommand(args, msgObject, client);
+            return;
+        } else {
+            if(!voiceConnection||!voiceConnection.dispatcher){
+                return;
+            }
+            voiceConnection.dispatcher.paused=!voiceConnection.dispatcher.paused;
+            
+            }
+    }catch(err){
+        console.error(err);
     }
-    if(!voiceConnection.dispatcher){
-        return;
-    }
-    if (voiceConnection.dispatcher.paused) {
-    const resume = require("./resume").default;
-    const resumeCommand = new resume() as IBotCommand;
-    resumeCommand.runCommand(args, msgObject, client);
-    return;
-    } else if (!voiceConnection.dispatcher.paused) {
-    const pause = require("./pause").default;
-    const pauseCommand = new pause() as IBotCommand;
-    pauseCommand.runCommand(args, msgObject, client);
-    return;
-    }
+
 }
 }
-}
+
+
