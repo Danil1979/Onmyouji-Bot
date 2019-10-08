@@ -1,8 +1,8 @@
 import * as Discord from "discord.js";
 import { IBotCommand } from "../api";
 import * as ytdl from "ytdl-core";
-import join from "./join";
 import * as youtubeSearch from "youtube-search";
+import volume from "./volume";
 const Youtube = require("simple-youtube-api");
 const youtube = new Youtube("AIzaSyDGnC_2VEXkFXOmbMlwW75Zx7fTMbLM8q0");
 
@@ -11,6 +11,9 @@ var opts: youtubeSearch.YouTubeSearchOptions = {
   key: "AIzaSyDGnC_2VEXkFXOmbMlwW75Zx7fTMbLM8q0"
 };
 export default class play implements IBotCommand {
+  static bigQueue: any[] = [];
+  static channelList: string[] = [];
+  static isPlaying: boolean[] = [];
   private readonly _command = "play";
 
   help(): string {
@@ -27,7 +30,7 @@ export default class play implements IBotCommand {
     client: Discord.Client
   ): Promise<void> {
     const currentChannel = msgObject.member.voiceChannel;
-    msgObject.delete();
+
     if(!args[0]){
         return;
     }
@@ -133,31 +136,32 @@ export default class play implements IBotCommand {
     }
   }
   async queueSong(currentChannel:Discord.VoiceChannel,song:any,msgObject:Discord.Message):Promise<void>{
-    if (join.channelList.indexOf(currentChannel.id) == -1) {
-        join.channelList.push(currentChannel.id);
-        join.bigQueue.push(new Array());
-        join.bigQueue[join.channelList.indexOf(currentChannel.id)].push(song);
-        join.isPlaying.push(false);
+    if (play.channelList.indexOf(currentChannel.id) == -1) {
+      play.channelList.push(currentChannel.id);
+      play.bigQueue.push(new Array());
+      play.bigQueue[play.channelList.indexOf(currentChannel.id)].push(song);
+      play.isPlaying.push(false);
       } else {
-        join.bigQueue[join.channelList.indexOf(currentChannel.id)].push(song);
+        play.bigQueue[play.channelList.indexOf(currentChannel.id)].push(song);
       }
 
       if (
-        join.isPlaying[join.channelList.indexOf(currentChannel.id)] ==
+        play.isPlaying[play.channelList.indexOf(currentChannel.id)] ==
           false ||
-        typeof join.isPlaying[join.channelList.indexOf(currentChannel.id)] ==
+        typeof play.isPlaying[play.channelList.indexOf(currentChannel.id)] ==
           "undefined"
       ) {
-        join.isPlaying[join.channelList.indexOf(currentChannel.id)] = true;
+        play.isPlaying[play.channelList.indexOf(currentChannel.id)] = true;
         // msgObject.channel.send("Playing song now.");
-        return playSong(join.bigQueue, msgObject, currentChannel);
+        return playSong(play.bigQueue, msgObject, currentChannel);
       } else if (
-        join.isPlaying[join.channelList.indexOf(currentChannel.id)] == true
+        play.isPlaying[play.channelList.indexOf(currentChannel.id)] == true
       ) {
         msgObject.channel.send(`${song.title} added to queue`);
         return;
       }
   }
+
 
 }
 
@@ -172,26 +176,27 @@ export function playSong(
       .then(connection => {
         const dispatcher = connection
           .playStream(
-            ytdl(queue[join.channelList.indexOf(currentChannel.id)][0].url, {
+            ytdl(queue[play.channelList.indexOf(currentChannel.id)][0].url, {
               quality: "highestaudio",
               highWaterMark: 1024 * 1024 * 10
             })
           )
           .on("start", () => {
+            dispatcher.setVolume(volume.volume/100);
             msg.channel.send(
-              `>>> Now Playing: ${queue[join.channelList.indexOf(currentChannel.id)][0].title}-----`
+              `>>> Now Playing: ${queue[play.channelList.indexOf(currentChannel.id)][0].title} with volume-----`
             );
           })
           .on("end", end => {
-            queue[join.channelList.indexOf(currentChannel.id)].shift();
+            queue[play.channelList.indexOf(currentChannel.id)].shift();
 
             if (
-              queue[join.channelList.indexOf(currentChannel.id)].length >= 1
+              queue[play.channelList.indexOf(currentChannel.id)].length >= 1
             ) {
               return playSong(queue, msg, currentChannel);
             } else {
-              join.isPlaying[
-                join.channelList.indexOf(currentChannel.id)
+              play.isPlaying[
+                play.channelList.indexOf(currentChannel.id)
               ] = false;
 
               return currentChannel.leave();

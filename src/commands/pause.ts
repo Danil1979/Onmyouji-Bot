@@ -14,7 +14,7 @@ isThisCommand(command: string): boolean {
 
 async runCommand(args: string[], msgObject: Discord.Message, client: Discord.Client): Promise<void> {
 
-    msgObject.delete();
+
     if(!msgObject.guild.voiceConnection.dispatcher){
         return;
     }

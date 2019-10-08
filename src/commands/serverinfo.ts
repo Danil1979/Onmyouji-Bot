@@ -14,7 +14,7 @@ export default class serverinfo implements IBotCommand {
     }
 
     async runCommand(args: string[], msgObject: Discord.Message, client: Discord.Client): Promise<void> {
-        msgObject.delete();
+
         let embed =new Discord.RichEmbed()
                         .setColor("RANDOM")
                         .setTitle("Server Info")

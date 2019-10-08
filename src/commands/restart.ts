@@ -1,6 +1,6 @@
 import * as Discord from "discord.js";
 import {IBotCommand} from "../api";
-import * as ConfigFile from "../config";
+// require('dotenv').config();
 export default class restart implements IBotCommand {
 
     private readonly _command = "restart";
@@ -15,7 +15,7 @@ export default class restart implements IBotCommand {
 
     async runCommand(args: string[], msgObject: Discord.Message, client: Discord.Client): Promise<void> {
         //if bot is in a channel
-        msgObject.delete();
+
         if(msgObject.guild.voiceConnection){
             msgObject.channel.send(">>> I can't carry out that function right now because I'm in a voice channel!");
             return;
@@ -27,7 +27,7 @@ export default class restart implements IBotCommand {
         }
         msgObject.channel.send(">>> Restarting...");
         client.destroy();
-       await client.login(ConfigFile.config.token);
+       await client.login(process.env.DISCORD_TOKEN);
        msgObject.channel.send(">>> Online");
        return;
     }

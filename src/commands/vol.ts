@@ -1,8 +1,9 @@
 import * as Discord from "discord.js";
 import {IBotCommand} from "../api";
-export default class resume implements IBotCommand {
 
-    private readonly _command = "resume";
+export default class vol implements IBotCommand {
+
+    private readonly _command = "vol";
 
     help(): string {
         return "testing";
@@ -14,14 +15,12 @@ export default class resume implements IBotCommand {
 
     async runCommand(args: string[], msgObject: Discord.Message, client: Discord.Client): Promise<void> {
 
-        if(!msgObject.guild.voiceConnection.dispatcher){
-            return;
-        }
-        msgObject.guild.voiceConnection.dispatcher.resume();
-        msgObject.channel.send(">>> Resumed.");
+        const volume = require("./volume").default;
+        const volumeCommand = new volume() as IBotCommand;
+        volumeCommand.runCommand(args, msgObject, client);
         return;
     }
 
 
 
-}
+} 

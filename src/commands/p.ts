@@ -17,7 +17,7 @@ args: string[],
 msgObject: Discord.Message,
 client: Discord.Client
 ): Promise<void> {
-    msgObject.delete();
+
     const voiceConnection:Discord.VoiceConnection = msgObject.guild.voiceConnection;
     try{
         if (args[0]) {
@@ -30,10 +30,10 @@ client: Discord.Client
                 return;
             }
             voiceConnection.dispatcher.paused=!voiceConnection.dispatcher.paused;
-            
+
             }
     }catch(err){
-        console.error(err);
+        console.error(err); 
     }
 
 }

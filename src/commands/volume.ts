@@ -2,7 +2,7 @@ import * as Discord from "discord.js";
 import {IBotCommand} from "../api";
 
 export default class volume implements IBotCommand {
-
+    static volume=100;
     private readonly _command = "volume";
 
     help(): string {
@@ -14,8 +14,12 @@ export default class volume implements IBotCommand {
     }
 
     async runCommand(args: string[], msgObject: Discord.Message, client: Discord.Client): Promise<void> {
-        msgObject.delete();
+
         const volumeNumber:number= +args[0];
+        if(!args[0]){
+            msgObject.channel.send(`>>> Volume:${volume.volume}%`);
+            return;
+        }
         if(!msgObject.guild.voiceConnection.dispatcher){
             msgObject.channel.send(">>> Theres no music playing.");
             return;
@@ -30,6 +34,10 @@ export default class volume implements IBotCommand {
         }
       msgObject.guild.voiceConnection.dispatcher.setVolume(volumeNumber/100);
       msgObject.channel.send(`>>> Volume: ${volumeNumber}%`);
+      volume.volume=volumeNumber;
+      return;
+        
+
     }
 
 
