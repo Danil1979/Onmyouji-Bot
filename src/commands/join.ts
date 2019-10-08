@@ -3,9 +3,7 @@ import { IBotCommand } from "../api";
 
 
 export default class join implements IBotCommand {
-static bigQueue: any[] = [];
-static channelList: string[] = [];
-static isPlaying: boolean[] = [];
+
 
 private readonly _command = "join";
 
@@ -22,7 +20,7 @@ async runCommand(
   msgObject: Discord.Message,
   client: Discord.Client
 ): Promise<void> {
-  msgObject.delete();
+
   const currentChannel = msgObject.member.voiceChannel;
   if (currentChannel) {
     currentChannel.join();

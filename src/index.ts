@@ -3,7 +3,6 @@ import * as ConfigFile from "./config";
 import { IBotCommand } from "./api";
 require('dotenv').config();
 
-var ffmpeg = require('ffmpeg-static');
 
 
 const client: Discord.Client = new Discord.Client();

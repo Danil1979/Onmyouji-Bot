@@ -15,7 +15,10 @@ export let config = {
         "skip",
         "restart",
         "volume",
-        "p"
+        "p",
+        "vol",
+        "pop"
         
+
     ]
 }
