@@ -24,10 +24,10 @@ export default class volume implements IBotCommand {
             msgObject.channel.send(">>> Theres no music playing.");
             return;
         }
-        if(!volumeNumber){
-            msgObject.channel.send(`>>> Volume: ${msgObject.guild.voiceConnection.dispatcher.volume*100}%`);
-            return;
-        }
+        // if(!volumeNumber){
+        //     msgObject.channel.send(`>>> Volume: ${msgObject.guild.voiceConnection.dispatcher.volume*100}%`);
+        //     return;
+        // }
         if(isNaN(volumeNumber)|| volumeNumber>200||volumeNumber<0){
              msgObject.channel.send(">>> Please enter a number in between 0-200.");
              return;

@@ -5,11 +5,11 @@ import * as youtubeSearch from "youtube-search";
 import volume from "./volume";
 import loop from "./loop";
 const Youtube = require("simple-youtube-api");
-const youtube = new Youtube("AIzaSyDGnC_2VEXkFXOmbMlwW75Zx7fTMbLM8q0");
+const youtube = new Youtube(process.env.YOUTUBE_TOKEN);
 
 var opts: youtubeSearch.YouTubeSearchOptions = {
   maxResults: 10,
-  key: "AIzaSyDGnC_2VEXkFXOmbMlwW75Zx7fTMbLM8q0"
+  key: process.env.YOUTUBE_TOKEN
 };
 export default class play implements IBotCommand {
   static bigQueue: any[] = [];
@@ -23,6 +23,7 @@ export default class play implements IBotCommand {
 
   isThisCommand(command: string): boolean {
     return command === this._command;
+    
   }
 
   async runCommand(
@@ -34,6 +35,10 @@ export default class play implements IBotCommand {
 
     if(!args[0]){
         return;
+    }
+    if(!msgObject.member.voiceChannel){
+      msgObject.channel.send("Please join a voice channel first.");
+      return;
     }
     if (
       args[0].match(/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/)
@@ -185,7 +190,7 @@ export function playSong(
           .on("start", () => {
             dispatcher.setVolume(volume.volume/100);
             msg.channel.send(
-              `>>> Now Playing: ${queue[play.channelList.indexOf(currentChannel.id)][0].title} with volume-----`
+              `>>> Now Playing: ${queue[play.channelList.indexOf(currentChannel.id)][0].title} with volume: ${volume.volume}%-----`
             );
           })
           .on("end", end => {
