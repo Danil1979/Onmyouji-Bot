@@ -3,6 +3,7 @@ import { IBotCommand } from "../api";
 import * as ytdl from "ytdl-core";
 import * as youtubeSearch from "youtube-search";
 import volume from "./volume";
+import loop from "./loop";
 const Youtube = require("simple-youtube-api");
 const youtube = new Youtube("AIzaSyDGnC_2VEXkFXOmbMlwW75Zx7fTMbLM8q0");
 
@@ -188,7 +189,10 @@ export function playSong(
             );
           })
           .on("end", end => {
-            queue[play.channelList.indexOf(currentChannel.id)].shift();
+            if(!loop.loop){
+              queue[play.channelList.indexOf(currentChannel.id)].shift();
+            }
+  
 
             if (
               queue[play.channelList.indexOf(currentChannel.id)].length >= 1
