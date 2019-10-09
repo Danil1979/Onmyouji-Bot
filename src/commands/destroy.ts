@@ -25,7 +25,7 @@ export default class destroy implements IBotCommand {
             msgObject.channel.send("Only Danil can use this command!");
             return;
         }
-        msgObject.channel.send(">>> Restarting...");
+        msgObject.channel.send(">>> Shutting Down...");
         client.destroy();
         return;
     }
