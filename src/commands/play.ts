@@ -4,6 +4,7 @@ import * as ytdl from "ytdl-core";
 import * as youtubeSearch from "youtube-search";
 import volume from "./volume";
 import loop from "./loop";
+import info from "./info";
 const Youtube = require("simple-youtube-api");
 const youtube = new Youtube(process.env.YOUTUBE_TOKEN);
 
@@ -189,9 +190,12 @@ export function playSong(
           )
           .on("start", () => {
             dispatcher.setVolume(volume.volume/100);
-            msg.channel.send(
-              `>>> Now Playing: ${queue[play.channelList.indexOf(currentChannel.id)][0].title} with volume: ${volume.volume}%-----`
-            );
+            if(info.info==true){
+              msg.channel.send(
+                `>>> Now Playing: ${queue[play.channelList.indexOf(currentChannel.id)][0].title} with volume: ${volume.volume}%-----`
+              );
+            }
+          
           })
           .on("end", end => {
             if(!loop.loop){

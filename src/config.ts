@@ -19,7 +19,9 @@ export let config = {
         "vol",
         "pop",
         "destroy",
-        "loop"
+        "loop",
+        "format",
+        "info"
         
 
     ]
