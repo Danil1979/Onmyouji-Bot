@@ -1,3 +1,4 @@
 src/commands/commandTemplate.ts
 dist/commands/commandTemplate.js
 .env
+credentials.json

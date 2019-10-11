@@ -1,11 +1,13 @@
 import * as Discord from "discord.js";
 import * as ConfigFile from "./config";
 import { IBotCommand } from "./api";
+import { initialize}  from "./commands/update";
 require('dotenv').config();
 
 
-
 const client: Discord.Client = new Discord.Client();
+
+
 
 let commands : IBotCommand[] = [];
 
@@ -16,6 +18,7 @@ client.on("ready", ()=>{
     console.log("Ready!!");
     //bot activity
     client.user.setActivity("Danil suffers", {type:"WATCHING" });
+    initialize();
 })
 client.on("message",msg=>{
 
