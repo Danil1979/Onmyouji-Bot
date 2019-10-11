@@ -3,7 +3,7 @@ import {IBotCommand} from "../api";
 import {google} from "googleapis";
 import { JWT } from "google-auth-library";
 
-const creds = require('../../credentials.json');
+
 
 export default class update implements IBotCommand {
     static dataArray:any[][]=[];
@@ -40,7 +40,7 @@ async function gsrun(gclient:JWT){
   export function initialize():void{
       if(!process.env.CLIENT_KEY){
           console.log("CLIENT_KEY NOT FOUND.");
-          
+
           return;
       }
 const googleClient = new google.auth.JWT(
