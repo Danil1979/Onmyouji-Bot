@@ -26,7 +26,8 @@ export default class skills implements IBotCommand {
     accessSheet(shikiQuery:string,msgObject:Discord.Message){
       var shiki:boolean=false;
       var queryArray=[];
-      for(let i=0;i<update.skillArray.length;i++){
+
+      for(var i=0;i<update.skillArray.length;i++){
               const aliasArray:string[] =update.skillArray[i][1].split(",");
               for(let x=0;x<aliasArray.length;x++){
                   aliasArray[x]=aliasArray[x].toLowerCase();
@@ -34,28 +35,34 @@ export default class skills implements IBotCommand {
               if(update.skillArray[i][0].toLowerCase()==shikiQuery.toLowerCase()){
                    queryArray.push(update.skillArray[i]);
                    shiki=true;
-                  continue;
+                  break;
               }
             
               if(aliasArray.indexOf(shikiQuery.toLowerCase())!=-1){
                 queryArray.push(update.skillArray[i]);
                 shiki=true;
-                  continue;
+                  break;
            }     
       }
-      
+      for(let x=i+1;x<update.skillArray.length;x++){
+        if(update.skillArray[x][0]!=""){
 
+          break;
+        }
+        queryArray.push(update.skillArray[x]);
+      }
+   
       if(shiki){
 
         var tempArray=[];
         var skill=queryArray[0][3];
           for(let i=0;i<queryArray.length;i++){
-              if(queryArray[i][3]==skill){
-
+              if(queryArray[i][3]==skill||queryArray[i][3]==""){
+ 
                 tempArray.push(queryArray[i]);
 
               }else{
-  
+
                 this.format(tempArray,msgObject);
                 skill=queryArray[i][3];
                 tempArray.splice(0,queryArray.length);
@@ -68,7 +75,7 @@ export default class skills implements IBotCommand {
       }else{msgObject.channel.send("Shikigami not found.")};
  
   }
-//|Shiki name	|Alias|	number of skills|	skill|	SKILL upgrade|	skill level|	type|	coldown	|onibi|thumbnail|
+//|Shiki name	|Alias|	number of skills|	skill|	SKILL upgrade|	skill level|	type|	coldown	|onibi|thumbnail|skillname|note name|note description
 
   format(tempArray:any[][],msgObject:Discord.Message){
     const shikiSkill={
@@ -80,11 +87,21 @@ export default class skills implements IBotCommand {
       thumbnail:tempArray[0][9],
       skillname:tempArray[0][10]
     }
+    var noteArray=[];
+    var noteArrayValue=[];
+    for(let i=0;i<tempArray.length;i++){
+      if(tempArray[i][11]){
+        
+        noteArray.push(tempArray[i][11]);
+        noteArrayValue.push(tempArray[i][12]);
+      }
+    }
+
     var skillLevel="";
     var skillUpgrade="";
     var level="Level";
     var effect="Effect";
-    if(tempArray[0][5]==""){
+    if(tempArray[0][5]==""){ 
       skillLevel="\u200b";
       skillUpgrade="\u200b";
       level="\u200b";
@@ -108,7 +125,9 @@ export default class skills implements IBotCommand {
     .addField("Onibi",shikiSkill.onibi,true)
     .addField(level,skillLevel,true)
     .addField(effect,skillUpgrade,true)
-    
+    for(let i=0;i<noteArray.length;i++){
+      embed.addField(noteArray[i],noteArrayValue[i],true);
+    }
     msgObject.channel.send(embed)
     .catch(console.error);
   }

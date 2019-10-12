@@ -1,9 +1,12 @@
+require('dotenv').config();
 
+  
 
 export let config = {
 
     "token": "",
-    "prefix": "~", 
+
+    "prefix": process.env.prefix||"~", 
     "commands":[
         "kick",
         "prune",

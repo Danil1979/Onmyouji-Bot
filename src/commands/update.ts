@@ -19,7 +19,8 @@ export default class update implements IBotCommand {
     }
 
     async runCommand(args: string[], msgObject: Discord.Message, client: Discord.Client): Promise<void> {
-        initialize();
+      await  initialize();
+      msgObject.channel.send("Updated.");
     }
 
 
