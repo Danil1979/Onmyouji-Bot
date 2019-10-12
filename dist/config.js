@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.config = {
     "token": "",
-    "prefix": ";",
+    "prefix": "~",
     "commands": [
         "kick",
         "prune",
