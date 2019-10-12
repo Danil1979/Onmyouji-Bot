@@ -13,8 +13,10 @@ export default class skip implements IBotCommand {
     }
 
     async runCommand(args: string[], msgObject: Discord.Message, client: Discord.Client): Promise<void> {
- 
-
+        
+        if(!msgObject.guild.voiceConnection||!msgObject.guild.voiceConnection.dispatcher){
+            return;
+        }
         msgObject.guild.voiceConnection.dispatcher.end();
         msgObject.channel.send(`>>> Song skipped!`);
         return;

@@ -42,9 +42,7 @@ async runCommand(args: string[], msgObject: Discord.Message, client: Discord.Cli
     // .setDescription("This is the description(?Shiki_Bio)")
     .setImage("https://vignette.wikia.nocookie.net/onmyoji/images/f/f9/312skin1.png/revision/latest?cb=20181001190618")
     
-    if(msgObject.member.id=="222728476816310272"){
-        embed.addField("TEST","tESTFIELD")
-    }
+
 
 
 
