@@ -1,4 +1,3 @@
-
 import * as Discord from "discord.js";
 import {IBotCommand, emojis} from "../api";
 import update from "./update";

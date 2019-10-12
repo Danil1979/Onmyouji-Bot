@@ -7,6 +7,7 @@ import { JWT } from "google-auth-library";
 
 export default class update implements IBotCommand {
     static dataArray:any[][]=[];
+    static skillArray:any[][]=[];
     private readonly _command = "update";
 
     help(): string {
@@ -30,11 +31,18 @@ async function gsrun(gclient:JWT){
     spreadsheetId:'1Ff5Jkwizib0XyOFSEJzWbiWkqJgYxZJdtMjWStzj5WM',
     range:'Onmyouji1'
     };
+    const skill ={
+        spreadsheetId:'1Ff5Jkwizib0XyOFSEJzWbiWkqJgYxZJdtMjWStzj5WM',
+        range:'Skill'
+    }
     let data =await gclientapi.spreadsheets.values.get(opt);
-    update.dataArray =data.data.values||[];
-     update.dataArray.shift();
+    let skillData =await gclientapi.spreadsheets.values.get(skill);
 
-    
+    update.dataArray =data.data.values||[];
+    update.skillArray = skillData.data.values||[];
+     update.dataArray.shift();
+     update.skillArray.shift();
+
     }
     
   export function initialize():void{

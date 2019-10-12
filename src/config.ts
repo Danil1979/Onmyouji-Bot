@@ -3,7 +3,7 @@
 export let config = {
 
     "token": "",
-    "prefix": "~", 
+    "prefix": ";", 
     "commands":[
         "kick",
         "prune",
@@ -24,7 +24,8 @@ export let config = {
         "info",
         "test",
         "stats",
-        "update"
+        "update",
+        "skills"
         
 
     ]
