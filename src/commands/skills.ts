@@ -1,6 +1,6 @@
 import * as Discord from "discord.js";
 import {IBotCommand} from "../api";
-import update from "./update";
+import update, { initialize } from "./update";
 
 export default class skills implements IBotCommand {
 
@@ -15,21 +15,24 @@ export default class skills implements IBotCommand {
     }
 
     async runCommand(args: string[], msgObject: Discord.Message, client: Discord.Client): Promise<void> {
-
+      const shikiQuery = args.join(" ");
       if(!args[0]){
         return;
     }
 
-    var shikiQuery=args[0] 
-    this.accessSheet(shikiQuery,msgObject);
+
+    this.accessSheet(shikiQuery,msgObject,false);
     }
-    accessSheet(shikiQuery:string,msgObject:Discord.Message){
+    async accessSheet(shikiQuery:string,msgObject:Discord.Message,retried:boolean){
       var shiki:boolean=false;
       var queryArray=[];
 
       for(var i=0;i<update.skillArray.length;i++){
               const aliasArray:string[] =update.skillArray[i][1].split(",");
               for(let x=0;x<aliasArray.length;x++){
+                if(aliasArray[x].charAt(0)==" "){
+                  aliasArray[x]=aliasArray[x].substring(1);
+              }
                   aliasArray[x]=aliasArray[x].toLowerCase();
               }
               if(update.skillArray[i][0].toLowerCase()==shikiQuery.toLowerCase()){
@@ -72,7 +75,13 @@ export default class skills implements IBotCommand {
            
           }
           this.format(tempArray,msgObject);
-      }else{msgObject.channel.send("Shikigami not found.")};
+      }else if(!shiki&&retried){
+        msgObject.channel.send("Shikigami not found.")
+        return;
+    }else if(!shiki&&!retried){
+        await initialize();
+        this.accessSheet(shikiQuery,msgObject,true);  
+        };
  
   }
 //|Shiki name	|Alias|	number of skills|	skill|	SKILL upgrade|	skill level|	type|	coldown	|onibi|thumbnail|skillname|note name|note description

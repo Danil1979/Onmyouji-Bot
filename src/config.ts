@@ -28,7 +28,9 @@ export let config = {
         "test",
         "stats",
         "update",
-        "skills"
+        "skills",
+        "timer",
+        "date"
         
 
     ]

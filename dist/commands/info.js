@@ -22,7 +22,7 @@ class info {
     runCommand(args, msgObject, client) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!args[0]) {
-                msgObject.channel.send(`>>> Loop: ${info.info}`);
+                msgObject.channel.send(`>>> Info: ${info.info}`);
                 return;
             }
             if (args[0] == "false" || args[0] == "off") {
@@ -32,7 +32,7 @@ class info {
             }
             else if (args[0] == "true" || args[0] == "on") {
                 info.info = true;
-                msgObject.channel.send(`>>> Loop: ${info.info}`);
+                msgObject.channel.send(`>>> Info: ${info.info}`);
                 return;
             }
             else {

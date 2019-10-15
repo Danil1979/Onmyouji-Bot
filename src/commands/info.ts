@@ -18,7 +18,7 @@ export default class info implements IBotCommand {
     client: Discord.Client
   ): Promise<void> {
     if (!args[0]) {
-      msgObject.channel.send(`>>> Loop: ${info.info}`);
+      msgObject.channel.send(`>>> Info: ${info.info}`);
       return;
     }
     if (args[0] == "false" || args[0] == "off") {
@@ -27,7 +27,7 @@ export default class info implements IBotCommand {
       return;
     } else if (args[0] == "true" || args[0] == "on") {
         info.info = true;
-      msgObject.channel.send(`>>> Loop: ${info.info}`);
+      msgObject.channel.send(`>>> Info: ${info.info}`);
       return;
     }else{
         msgObject.channel.send("Please enter ~info on/off to use this command.");

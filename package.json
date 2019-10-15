@@ -13,6 +13,7 @@
     "discord.js": "^11.5.1",
     "dotenv": "^8.1.0",
     "googleapis": "^39.2.0",
+    "moment": "^2.24.0",
     "node-opus": "^0.3.2",
     "simple-youtube-api": "^5.2.1",
     "youtube-search": "^1.1.4",
