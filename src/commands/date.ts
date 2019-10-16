@@ -127,7 +127,7 @@ function createDisplayTime(now:moment.Moment,end:moment.Moment):number{
 if(Hour.toString().length==1){
   hoursDisplay= "0"+Hour.toString();
 }else{
-  hoursDisplay=hours.toString();
+  hoursDisplay=Hour.toString();
 }
 if(Minutes.toString().length==1){
   minsDisplay="0"+Minutes;
