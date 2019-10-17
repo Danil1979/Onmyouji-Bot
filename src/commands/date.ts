@@ -26,22 +26,23 @@ export default class date implements IBotCommand {
 
     async runCommand(args: string[], msgObject: Discord.Message, client: Discord.Client): Promise<void> {
 
-      setDate(args,msgObject,client);
-
+      setDate(client);
+      
+     
       }
    
 
 
 
 } 
-export function setDate(args:string[],msgObject: Discord.Message,client:Discord.Client){
-  countdown(msgObject);
+export function setDate(client: Discord.Client){
+  countdown(client);
   if(interval==false){
     interval=true;
-    setInterval(function(){countdown(msgObject)}, 60000);
+    setInterval(function(){countdown(client)}, 60000);
   }
 }
-async function countdown(msgObject:Discord.Message){
+async function countdown(client:Discord.Client){
 
  
   const feast1= update.TimerArray[0];
@@ -68,9 +69,16 @@ var hours;
   hours = createDisplayTime(ESTnow,end);
    
   }//else end
- 
-  const timerChannel=msgObject.guild.channels.get("633989276627107849");
-  const nameChannel=msgObject.guild.channels.get("633986619376009216");
+ const guild =client.guilds.get("404154708572373029");//Elysium guild ID
+ if(!guild){
+  console.log("Guild not found");
+   return;
+
+ }
+
+  const timerChannel=guild.channels.get("633989276627107849");
+  
+  const nameChannel=guild.channels.get("634317691905376256");
   if(!timerChannel){
     console.log("timerChannel not found");
     return;
@@ -88,7 +96,7 @@ if(hours<=0){
   if(onGoingFeast){
     onGoingFeast=false;
     timerChannel.setName("🎉 Feast is ending!");
-    nameChannel.setName("(TESTING)🍖 "+"Time until Feast");
+    nameChannel.setName("🍖 "+"Time until Feast");
   }else{
       nameChannel.setName("🎉 "+"Feast is happening!");   
     if(nextFeast=="feast1"){

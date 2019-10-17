@@ -17,7 +17,10 @@ export default class test implements IBotCommand {
 
 
     
-      msgObject.channel.send("<:yes:482203009674379264>")
+  const timerName=     msgObject.guild.channels.get("634317691905376256");
+      if(timerName){
+        timerName.setName("🍖 "+"Time until Feast");
+      }
 
     }
 

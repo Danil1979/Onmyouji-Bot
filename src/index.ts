@@ -2,6 +2,7 @@ import * as Discord from "discord.js";
 import * as ConfigFile from "./config";
 import { IBotCommand } from "./api";
 import { initialize}  from "./commands/update";
+import { setDate } from "./commands/date";
 require('dotenv').config();
 
 
@@ -13,12 +14,14 @@ let commands : IBotCommand[] = [];
 
 loadCommands(`${__dirname}/commands`);
 
-client.on("ready", ()=>{
+client.on("ready", async ()=>{
     //when bot is ready
-    console.log("Ready!!");
+
     //bot activity
-    client.user.setActivity("Danil suffers", {type:"WATCHING" });
-    initialize();
+    client.user.setActivity("Ring Toss!", {type:"PLAYING" });
+   await initialize();
+    setDate(client);
+    console.log("Ready!!");
 })
 client.on("message",msg=>{
 
