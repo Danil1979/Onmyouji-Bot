@@ -6,7 +6,7 @@ export default class pop implements IBotCommand {
     private readonly _command = "pop";
 
     help(): string {
-        return "testing";
+        return "~pop|to remove the most recently queue song.\n";
     }  
     
     isThisCommand(command: string): boolean {

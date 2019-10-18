@@ -6,7 +6,7 @@ export default class volume implements IBotCommand {
     private readonly _command = "volume";
 
     help(): string {
-        return "testing";
+        return "~volume 1-200|To adjust the volume of the music bot.\n";
     }  
     
     isThisCommand(command: string): boolean {

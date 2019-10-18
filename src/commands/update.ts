@@ -12,7 +12,7 @@ export default class update implements IBotCommand {
   private readonly _command = "update";
 
   help(): string {
-    return "testing";
+    return "";
   }
 
   isThisCommand(command: string): boolean {

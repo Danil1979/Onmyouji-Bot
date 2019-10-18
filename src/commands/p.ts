@@ -5,7 +5,7 @@ export default class p implements IBotCommand {
 private readonly _command = "p";
 
 help(): string {
-return "play or pause function";
+return "~p|can be used to search for song or to pause/resume the current song.\n";
 }
 
 isThisCommand(command: string): boolean {

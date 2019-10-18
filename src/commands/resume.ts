@@ -5,7 +5,7 @@ export default class resume implements IBotCommand {
     private readonly _command = "resume";
 
     help(): string {
-        return "testing";
+        return "~resume|to resume paused song.\n";
     }  
     
     isThisCommand(command: string): boolean {

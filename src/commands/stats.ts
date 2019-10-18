@@ -7,7 +7,7 @@ export default class stats implements IBotCommand {
 private readonly _command = "stats";
 
 help(): string {
-    return "testing";
+    return "~stats shikiname|to search for a shiki's maxed stats.\n";
 }  
 
 isThisCommand(command: string): boolean {

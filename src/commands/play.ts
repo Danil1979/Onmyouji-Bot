@@ -19,7 +19,7 @@ export default class play implements IBotCommand {
   private readonly _command = "play";
 
   help(): string {
-    return "testing";
+    return "~play songname or URL|to play a song from Youtube, user must be in a voice channel.\n";
   }
 
   isThisCommand(command: string): boolean {

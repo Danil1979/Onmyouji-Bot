@@ -6,7 +6,7 @@ export default class serverinfo implements IBotCommand {
     private readonly _command = "serverinfo";
 
     help(): string {
-        return "testing";
+        return "~serverinfo|to show current server info.\n";
     }  
     
     isThisCommand(command: string): boolean {

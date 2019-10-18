@@ -17,7 +17,7 @@ export default class date implements IBotCommand {
     private readonly _command = "date";
 
     help(): string {
-        return "testing";
+      return "";
     }  
     
     isThisCommand(command: string): boolean {

@@ -6,7 +6,7 @@ export default class destroy implements IBotCommand {
     private readonly _command = "destroy";
 
     help(): string {
-        return "destroy";
+        return "";
     }  
     
     isThisCommand(command: string): boolean {

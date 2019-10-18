@@ -6,7 +6,7 @@ export default class prune implements IBotCommand {
 private readonly _command = "prune";
 
 help(): string {
-return "delete messages";
+return "";
 }  
 
 isThisCommand(command: string): boolean {

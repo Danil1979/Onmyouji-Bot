@@ -23,6 +23,9 @@ client.on("ready", async ()=>{
     setDate(client);
     console.log("Ready!!");
 })
+client.on("rateLimit",msg=>{
+    console.log("ATTENTION!HITTING RATE LIMIT "+msg);
+})
 client.on("message",msg=>{
 
     //if messager = bot, ignore it
@@ -31,14 +34,15 @@ client.on("message",msg=>{
     if(msg.channel.type=="dm"){return;}
     //if message did not start with ~
     if(!msg.content.startsWith(ConfigFile.config.prefix)) {return;}
+
     if(msg.content.toLowerCase()=="~help"){
-        help();
+        help(msg);
         return;
     }
     //Handle Command
     handleCommand(msg);
 })
-async function help(){
+async function help(msg:Discord.Message){
     var commandList:string=">>> ";
     for(const commandsClass of commands){
         //attempt to execute commands
@@ -46,7 +50,7 @@ async function help(){
            
        
             //Pause execution whilst we run the command's coce
-            commandList +=await commandsClass.help() +"\n";
+            commandList +=await commandsClass.help();
             
         }
         catch(exception){
@@ -54,6 +58,7 @@ async function help(){
             console.log(exception);
         }
     }
+    msg.channel.send(commandList);
 }
 async function handleCommand(msg:Discord.Message){
 //Split the string into command and all of the args

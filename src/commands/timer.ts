@@ -6,7 +6,7 @@ export default class timer implements IBotCommand {
     private readonly _command = "timer";
 
     help(): string {
-        return "timer";
+        return "";
     }  
     
     isThisCommand(command: string): boolean {

@@ -6,7 +6,7 @@ export default class kick implements IBotCommand {
     private readonly _command = "kick";
 
     help(): string {
-        return "Kick a mentioned user";
+        return "";
     }  
     
     isThisCommand(command: string): boolean {

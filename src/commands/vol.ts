@@ -6,7 +6,7 @@ export default class vol implements IBotCommand {
     private readonly _command = "vol";
 
     help(): string {
-        return "testing";
+        return "~vol|same as ~volume function.\n";
     }  
     
     isThisCommand(command: string): boolean {

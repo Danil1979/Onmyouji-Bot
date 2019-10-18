@@ -7,7 +7,7 @@ export default class skills implements IBotCommand {
     private readonly _command = "skills";
 
     help(): string {
-        return "testing";
+        return "~skills shikiname|to search for a shiki's skill set.\n";
     }  
     
     isThisCommand(command: string): boolean {

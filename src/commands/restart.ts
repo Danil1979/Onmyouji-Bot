@@ -6,7 +6,7 @@ export default class restart implements IBotCommand {
     private readonly _command = "restart";
 
     help(): string {
-        return "testing";
+        return "";
     }  
     
     isThisCommand(command: string): boolean {

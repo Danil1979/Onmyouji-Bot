@@ -5,7 +5,7 @@ export default class loop implements IBotCommand {
   private readonly _command = "loop";
   static loop: boolean = false;
   help(): string {
-    return "loop";
+    return "~loop on/off|Whether to loop the current song playing.\n";
   }
 
   isThisCommand(command: string): boolean {

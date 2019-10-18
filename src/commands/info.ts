@@ -5,7 +5,7 @@ export default class info implements IBotCommand {
   private readonly _command = "info";
   static info: boolean = true;
   help(): string {
-    return "info";
+    return "";
   }
 
   isThisCommand(command: string): boolean {
