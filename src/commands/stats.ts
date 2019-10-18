@@ -87,7 +87,7 @@ format(shikiArray:any[],msgObject:Discord.Message){
     }
 
     const emojis:emojis={
-        SS:"<:ss:632559004266266625>",
+        SS:"<:ss:634724378726367272>",
         spd:"<:spd:632559004278718487>",
             S:"<:s_:632559004379250688>",
         hp:"<:hp:632559004106883104>",
