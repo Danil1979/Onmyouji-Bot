@@ -36,7 +36,7 @@ client.on("message", msg => {
     if (!msg.content.startsWith(ConfigFile.config.prefix)) {
         return;
     }
-    if (msg.content.toLowerCase() == ";help") {
+    if (msg.content.toLowerCase() == "~help") {
         help(msg);
         return;
     }

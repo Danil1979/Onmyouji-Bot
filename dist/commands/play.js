@@ -26,7 +26,7 @@ class play {
         this._command = "play";
     }
     help() {
-        return "~play songname or URL|To play a song from Youtube, user must be in a voice channel.\n";
+        return "~play songname or URL|to play a song from Youtube, user must be in a voice channel.\n";
     }
     isThisCommand(command) {
         return command === this._command;
