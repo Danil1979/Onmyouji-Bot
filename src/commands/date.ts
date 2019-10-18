@@ -87,9 +87,9 @@ var hours;
     console.log("nameChannel not found");
     return;
   }
-  if(daysDisplay>0){
+
     timerChannel.setName(	"⏱ "+daysDisplay+"D "+hoursDisplay+"H "+minsDisplay+"M");
-  }
+  
 
 
 if(hours<=0){
