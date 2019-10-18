@@ -29,13 +29,32 @@ client.on("message",msg=>{
     if(msg.author.bot) {return;}
     //if its direct message then ignore
     if(msg.channel.type=="dm"){return;}
-    //if message did not start with !
+    //if message did not start with ~
     if(!msg.content.startsWith(ConfigFile.config.prefix)) {return;}
-
+    if(msg.content.toLowerCase()=="~help"){
+        help();
+        return;
+    }
     //Handle Command
     handleCommand(msg);
 })
+async function help(){
+    var commandList:string=">>> ";
+    for(const commandsClass of commands){
+        //attempt to execute commands
+        try {
+           
+       
+            //Pause execution whilst we run the command's coce
+            commandList +=await commandsClass.help() +"\n";
+            
+        }
+        catch(exception){
 
+            console.log(exception);
+        }
+    }
+}
 async function handleCommand(msg:Discord.Message){
 //Split the string into command and all of the args
     let command = msg.content.split(" ")[0].replace(ConfigFile.config.prefix, "").toLowerCase();
