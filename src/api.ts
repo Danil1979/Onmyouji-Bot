@@ -9,7 +9,7 @@ runCommand(args:string[], msgObject:Discord.Message, client: Discord.Client): Pr
 }
 export interface emojis{
 [key:string]:string
-        ss:"<:ss:632559004266266625>",
+        SS:"<:ss:632559004266266625>",
         spd:"<:spd:632559004278718487>",
         S:"<:s_:632559004379250688>",
         hp:"<:hp:632559004106883104>",
