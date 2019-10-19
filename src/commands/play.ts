@@ -44,6 +44,7 @@ export default class play implements IBotCommand {
     if (
       args[0].match(/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/)
     ) {
+      console.log("Music bot:URL");
       const url = args[0];
 
       try {
@@ -69,6 +70,7 @@ export default class play implements IBotCommand {
           title,
           currentChannel
         };
+        console.log("Music Bot:Entering queueSong function");
         this.queueSong(currentChannel,song,msgObject);
       } catch (err) {
         console.error(err);
@@ -77,6 +79,7 @@ export default class play implements IBotCommand {
       }
     } else {
       try {
+        console.log("Music bot: searching using song name");
         const songToSearch = args.join(" ");
         var songInfo = await this.searchVideo(songToSearch);
         if (!songInfo) {
@@ -126,6 +129,7 @@ export default class play implements IBotCommand {
         return;
       }
       try {
+          console.log("Music Bot:Entering queueSong function.");
           this.queueSong(currentChannel,song,msgObject);
  
       } catch (err) {
@@ -135,6 +139,7 @@ export default class play implements IBotCommand {
     }
   }
   async searchVideo(songToSearch: string): Promise<any> {
+    console.log("entered searchVideo function");
     const songInfo = await youtubeSearch(songToSearch, opts);
     if (songInfo.pageInfo.totalResults == 0) {
       return null;
@@ -143,6 +148,7 @@ export default class play implements IBotCommand {
     }
   }
   async queueSong(currentChannel:Discord.VoiceChannel,song:any,msgObject:Discord.Message):Promise<void>{
+    console.log("MusicBot:entered queueSong function.");
     if (play.channelList.indexOf(currentChannel.id) == -1) {
       play.channelList.push(currentChannel.id);
       play.bigQueue.push(new Array());
@@ -177,6 +183,7 @@ export function playSong(
   msg: Discord.Message,
   currentChannel?: Discord.VoiceChannel
 ): void {
+  console.log("playSong function");
   if (currentChannel) {
     currentChannel
       .join()
