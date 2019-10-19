@@ -21,13 +21,15 @@ export default class destroy implements IBotCommand {
             return;
         }
         //If user is not me(Danil)
-        if(msgObject.member.id!='222728476816310272'){
+        if(msgObject.member.id=='222728476816310272'||msgObject.member.id=='149777597612556288'){
+            msgObject.channel.send(">>> Shutting Down...");
+            client.destroy();
+            return;
+        }else{
             msgObject.channel.send("Only Danil can use this command!");
             return;
         }
-        msgObject.channel.send(">>> Shutting Down...");
-        client.destroy();
-        return;
+
     }
 
 
