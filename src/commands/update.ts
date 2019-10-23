@@ -9,6 +9,7 @@ export default class update implements IBotCommand {
   static dataArray: any[][] = [];
   static skillArray: any[][] = [];
   static TimerArray: any[][] = [];
+  static soulArray: any[][] = [];
   private readonly _command = "update";
 
   help(): string {
@@ -44,6 +45,10 @@ async function gsrun(gclient: JWT): Promise<void> {
     spreadsheetId: "1Ff5Jkwizib0XyOFSEJzWbiWkqJgYxZJdtMjWStzj5WM",
     range: "Timer"
   }
+  const soul = {
+    spreadsheetId: "1Ff5Jkwizib0XyOFSEJzWbiWkqJgYxZJdtMjWStzj5WM",
+    range: "Soul"
+  }
   const updateOption = {
   spreadsheetId: "1Ff5Jkwizib0XyOFSEJzWbiWkqJgYxZJdtMjWStzj5WM",
   range: "Timer!A2",
@@ -51,10 +56,11 @@ async function gsrun(gclient: JWT): Promise<void> {
   resource: {values:date.newDate}
 }
 if(date.newDate === undefined || date.newDate.length == 0){
-
+    let soulData =await gclientapi.spreadsheets.values.get(soul);
     let data = await gclientapi.spreadsheets.values.get(opt);
     let skillData = await gclientapi.spreadsheets.values.get(skill);
     let timerData = await gclientapi.spreadsheets.values.get(timer);
+    update.soulArray = soulData.data.values || [];
     update.dataArray = data.data.values || [];
     update.skillArray = skillData.data.values || [];
     update.TimerArray =   timerData.data.values || [];
