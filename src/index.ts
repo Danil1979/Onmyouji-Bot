@@ -20,7 +20,8 @@ client.on("ready", async ()=>{
     //bot activity
     client.user.setActivity("Ring Toss!", {type:"PLAYING" });
    await initialize();
-    setDate(client);
+
+    // setDate(client);
     console.log("Ready!!");
 })
 client.on("rateLimit",msg=>{

@@ -72,6 +72,7 @@ var hours;
  const guild =client.guilds.get("404154708572373029");//Elysium guild ID
  if(!guild){
   console.log("Guild not found");
+  
    return;
 
  }
