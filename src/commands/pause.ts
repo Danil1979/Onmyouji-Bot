@@ -1,5 +1,6 @@
 import * as Discord from "discord.js";
 import {IBotCommand} from "../api";
+
 export default class pause implements IBotCommand {
 
 private readonly _command = "pause";

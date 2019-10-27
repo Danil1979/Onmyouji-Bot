@@ -50,7 +50,7 @@ async accessSheet(soulQuery:string,msgObject:Discord.Message,retried:boolean){
     if(soul){
         this.format(soul,msgObject);
     }else if(!soul&&retried){
-        msgObject.channel.send("Soul not found.")
+        msgObject.channel.send(`Sorry, I can't find the Soul named ${soulQuery}.`);
         return;
     }else if(!soul&&!retried){
         await initialize();

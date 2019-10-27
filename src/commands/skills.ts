@@ -76,7 +76,7 @@ export default class skills implements IBotCommand {
           }
           this.format(tempArray,msgObject);
       }else if(!shiki&&retried){
-        msgObject.channel.send("Shikigami not found.")
+        msgObject.channel.send(`Sorry, I can't find the Shikigami named ${shikiQuery} to display it's skills.`)
         return;
     }else if(!shiki&&!retried){
         await initialize();
