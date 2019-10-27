@@ -50,7 +50,7 @@ async accessSheet(shikiQuery:string,msgObject:Discord.Message,retried:boolean){
     if(shiki){
         this.format(shiki,msgObject);
     }else if(!shiki&&retried){
-        msgObject.channel.send("Shikigami not found.")
+        msgObject.channel.send(`Sorry, I can't find the Shikigami named ${shikiQuery}.`)
         return;
     }else if(!shiki&&!retried){
         await initialize();
