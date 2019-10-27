@@ -27,9 +27,9 @@ export let config = {
         "stats",
         "update",
         "skills",
-        "timer",
         "date",
-        "souls"
+        "souls",
+  
         
 
     ]

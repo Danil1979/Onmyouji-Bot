@@ -9,22 +9,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const play_1 = require("./play");
-class pop {
+class testCommand {
     constructor() {
-        this._command = "pop";
+        this._command = "testCommand";
     }
     help() {
-        return "~pop|to remove the most recently queue song.\n";
+        return "testing";
     }
     isThisCommand(command) {
         return command === this._command;
     }
     runCommand(args, msgObject, client) {
         return __awaiter(this, void 0, void 0, function* () {
-            play_1.popSong(msgObject.guild, msgObject);
         });
     }
 }
-exports.default = pop;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicG9wLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vc3JjL2NvbW1hbmRzL3BvcC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7OztBQUVBLGlDQUE4QjtBQUM5QixNQUFxQixHQUFHO0lBQXhCO1FBRXFCLGFBQVEsR0FBRyxLQUFLLENBQUM7SUFrQnRDLENBQUM7SUFoQkcsSUFBSTtRQUNBLE9BQU8sZ0RBQWdELENBQUM7SUFDNUQsQ0FBQztJQUVELGFBQWEsQ0FBQyxPQUFlO1FBQzFCLE9BQU8sT0FBTyxLQUFLLElBQUksQ0FBQyxRQUFRLENBQUM7SUFDcEMsQ0FBQztJQUVLLFVBQVUsQ0FBQyxJQUFjLEVBQUUsU0FBMEIsRUFBRSxNQUFzQjs7WUFFaEYsY0FBTyxDQUFDLFNBQVMsQ0FBQyxLQUFLLEVBQUMsU0FBUyxDQUFDLENBQUM7UUFFdEMsQ0FBQztLQUFBO0NBSUo7QUFwQkQsc0JBb0JDIn0=
+exports.default = testCommand;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic2hvd2Rvd24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi9zcmMvY29tbWFuZHMvc2hvd2Rvd24udHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7QUFHQSxNQUFxQixXQUFXO0lBQWhDO1FBRXFCLGFBQVEsR0FBRyxhQUFhLENBQUM7SUFnQjlDLENBQUM7SUFkRyxJQUFJO1FBQ0EsT0FBTyxTQUFTLENBQUM7SUFDckIsQ0FBQztJQUVELGFBQWEsQ0FBQyxPQUFlO1FBQzFCLE9BQU8sT0FBTyxLQUFLLElBQUksQ0FBQyxRQUFRLENBQUM7SUFDcEMsQ0FBQztJQUVLLFVBQVUsQ0FBQyxJQUFjLEVBQUUsU0FBMEIsRUFBRSxNQUFzQjs7UUFFbkYsQ0FBQztLQUFBO0NBSUo7QUFsQkQsOEJBa0JDIn0=

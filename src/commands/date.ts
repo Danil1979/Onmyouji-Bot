@@ -42,9 +42,7 @@ export function setDate(client: Discord.Client){
     setInterval(function(){countdown(client)}, 60000);
   }
 }
-async function countdown(client:Discord.Client){
-
- 
+async function countdown(client:Discord.Client){ 
   const feast1= update.TimerArray[0];
   const feast2=update.TimerArray[1];
   const now = moment.utc().subtract(5,"hours").format("YYYY-MM-DD HH:mm");

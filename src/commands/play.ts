@@ -7,226 +7,161 @@ import loop from "./loop";
 import info from "./info";
 const Youtube = require("simple-youtube-api");
 const youtube = new Youtube(process.env.YOUTUBE_TOKEN);
+const queue = new Map();
 
 var opts: youtubeSearch.YouTubeSearchOptions = {
   maxResults: 10,
   key: process.env.YOUTUBE_TOKEN
 };
+
 export default class play implements IBotCommand {
-  static bigQueue: any[] = [];
-  static channelList: string[] = [];
-  static isPlaying: boolean[] = [];
-  private readonly _command = "play";
 
-  help(): string {
-    return "~play songname or URL|to play a song from Youtube, user must be in a voice channel.\n";
-  }
+    private readonly _command = "play";
 
-  isThisCommand(command: string): boolean {
-    return command === this._command;
+    help(): string {
+        return "testing";
+    }  
     
-  }
-
-  async runCommand(
-    args: string[],
-    msgObject: Discord.Message,
-    client: Discord.Client
-  ): Promise<void> {
-    const currentChannel = msgObject.member.voiceChannel;
-
-    if(!args[0]){
-        return;
+    isThisCommand(command: string): boolean {
+       return command === this._command;
     }
-    if(!msgObject.member.voiceChannel){
-      msgObject.channel.send("Please join a voice channel first.");
-      return;
+
+    async runCommand(args: string[], msgObject: Discord.Message, client: Discord.Client): Promise<void> {
+        if(!args[0]){
+            return;
+        }
+
+        const serverQueue = queue.get(msgObject.guild.id);
+        const currentChannel = msgObject.member.voiceChannel;
+
+
+        if(!currentChannel){
+            msgObject.channel.send("You must be in a voice channel to use this command.");
+        }
+        if(args[0].match(/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/)){
+            const songInfo = await ytdl.getInfo(args[0]);
+            var song = {
+                title: songInfo.title,
+                url:songInfo.video_url,
+                channel:songInfo.author.name,
+            };
+        }else{
+            const songToSearch = args.join(" ");
+            const songInfo = await youtubeSearch(songToSearch, opts);
+            if (songInfo.pageInfo.totalResults == 0) {
+                msgObject.channel.send(">>> No song found.");
+                return;
+            } else {
+                for (var i = 0; i < 10; i++) {
+                    if (
+                      songInfo.results[i].kind != undefined &&
+                      songInfo.results[i].kind != "youtube#video"
+                    ) {
+                      continue;
+                    } else {
+                      break;
+                    }
+                  }
+                  var song = {
+                    title: songInfo.results[i].title,
+                    url:songInfo.results[i].link,
+                    channel:songInfo.results[i].channelTitle
+                };
+                const embed = new Discord.RichEmbed()
+                .setColor("RANDOM")
+                .setTitle(`${song.title}`)
+                .setDescription(
+                  `You searched for ${songToSearch}, here is what I found!\n${song.url}`
+                )
+                .setFooter(`Channel Name:${song.channel}`);
+      
+               msgObject.channel.send({ embed });
+            }
+        }
+        
+   
+    
+
+        if(!serverQueue){
+
+            const   queueConstruct :{
+                textChannel: Discord.TextChannel|Discord.DMChannel|Discord.GroupDMChannel,
+                voiceChannel: Discord.VoiceChannel,
+                connection: Discord.VoiceConnection|null,
+                songs: any[],  
+                playing: boolean
+                
+            } ={
+                textChannel: msgObject.channel,
+                voiceChannel:currentChannel,
+                connection: null,
+                songs: [],
+                playing: true,
+            };
+
+            queue.set(msgObject.guild.id, queueConstruct);
+
+            queueConstruct.songs.push(song);
+
+            try{
+                var connection = await currentChannel.join();
+                    queueConstruct.connection = connection;
+                    playSong(msgObject.guild,queueConstruct.songs[0],msgObject);
+            } catch(err){
+                console.error(err);
+                queue.delete(msgObject.guild.id);
+                msgObject.channel.send(err);
+                return;
+            }
+        } else {
+            serverQueue.songs.push(song);
+            console.log(serverQueue.songs);
+            msgObject.channel.send(`>>> ${song.title} has been added to the queue.`);
+            return;
+        }
+
     }
-    if (
-      args[0].match(/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/)
-    ) {
-      console.log("Music bot:URL");
-      const url = args[0];
 
-      try {
-        const urlQuery = url
-          .replace(/(>|<)/gi, "")
-          .split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
-        const id = urlQuery[2].split(/[^0-9a-z_\-]/i)[0];
-        const video = await youtube.getVideoByID(id);
 
-        if (video.raw.snippet.liveBroadcastContent === "live") {
-          msgObject.channel.send("I don't support ive streams!");
-          return;
-        }
-        //if video length > 1 hours, dont allow
-        // if (video.duration.hours !== 0) {
-        //   msgObject.channel.send("I cannot play video longer than 1 hour");
-        //   return;
-        // }
+} 
 
-        const title = video.title;
-        const song = {
-          url,
-          title,
-          currentChannel
-        };
-        console.log("Music Bot:Entering queueSong function");
-        this.queueSong(currentChannel,song,msgObject);
-      } catch (err) {
-        console.error(err);
-        msgObject.channel.send("error occur");
+function playSong(guild:Discord.Guild,song:any,msgObject:Discord.Message) {
+    const serverQueue = queue.get(guild.id);
+
+    if(!song){
+        serverQueue.voiceChannel.leave();
+        queue.delete(guild.id);
         return;
-      }
-    } else {
-      try {
-        console.log("Music bot: searching using song name");
-        const songToSearch = args.join(" ");
-        var songInfo = await this.searchVideo(songToSearch);
-        if (!songInfo) {
-          msgObject.channel.send(
-            `>>> There was an error searching for ${songToSearch}, please try something else`
-          );
-          return;
-        }
-        let songFound = false;
-        for (var i = 0; i < 10; i++) {
-          if (
-            songInfo.results[i].kind != undefined &&
-            songInfo.results[i].kind != "youtube#video"
-          ) {
-            continue;
-          } else {
-            songFound = true;
-            break;
-          }
-        }
-        if (songFound == false) {
-          msgObject.channel.send(">>> Song not found");
-          return;
-        }
-        var song = {
-          title: songInfo.results[i].title,
-          url: songInfo.results[i].link,
-          channel: songInfo.results[i].channelTitle,
-          currentChannel
-        };
-        const embed = new Discord.RichEmbed()
-          .setColor("RANDOM")
-          .setTitle(`${song.title}`)
-          .setDescription(
-            `You searched for ${songToSearch}, here is what I found!\n${song.url}`
-          )
-          .setFooter(`Channel Name:${song.channel}`);
-
-        await msgObject.channel.send({ embed });
-
-        // if (song.raw.snippet.liveBroadcastContent === "live") {
-        //   msgObject.channel.send("I don't support livestream!");
-        //   return;
-        // }
-      } catch (err) {
-        console.error(err);
-        return;
-      }
-      try {
-          console.log("Music Bot:Entering queueSong function.");
-          this.queueSong(currentChannel,song,msgObject);
- 
-      } catch (err) {
-        console.error(err);
-        return;
-      }
-    }
-  }
-  async searchVideo(songToSearch: string): Promise<any> {
-    console.log("entered searchVideo function");
-    const songInfo = await youtubeSearch(songToSearch, opts);
-    if (songInfo.pageInfo.totalResults == 0) {
-      return null;
-    } else {
-      return songInfo;
-    }
-  }
-  async queueSong(currentChannel:Discord.VoiceChannel,song:any,msgObject:Discord.Message):Promise<void>{
-    console.log("MusicBot:entered queueSong function.");
-    if (play.channelList.indexOf(currentChannel.id) == -1) {
-      play.channelList.push(currentChannel.id);
-      play.bigQueue.push(new Array());
-      play.bigQueue[play.channelList.indexOf(currentChannel.id)].push(song);
-      play.isPlaying.push(false);
-      } else {
-        play.bigQueue[play.channelList.indexOf(currentChannel.id)].push(song);
-      }
-
-      if (
-        play.isPlaying[play.channelList.indexOf(currentChannel.id)] ==
-          false ||
-        typeof play.isPlaying[play.channelList.indexOf(currentChannel.id)] ==
-          "undefined"
-      ) {
-        play.isPlaying[play.channelList.indexOf(currentChannel.id)] = true;
-        // msgObject.channel.send("Playing song now.");
-        return playSong(play.bigQueue, msgObject, currentChannel);
-      } else if (
-        play.isPlaying[play.channelList.indexOf(currentChannel.id)] == true
-      ) {
-        msgObject.channel.send(`${song.title} added to queue`);
-        return;
-      }
-  }
-
-
+    }    
+    const dispatcher:Discord.StreamDispatcher = serverQueue.connection.playStream(ytdl(song.url),{
+        quality: "highestaudio",
+        highWaterMark: 1024 * 1024 * 10
+    }).on('start',()=>{
+        dispatcher.setVolume(volume.volume/100);
+        msgObject.channel.send(`>>> Now playing ${song.title} with volume ${volume.volume}%`);
+        
+    })
+    .on('end',()=> {
+        console.log('Music ended.');
+        serverQueue.songs.shift();
+        playSong(guild,serverQueue.songs[0],msgObject);
+    })
+    .on("error", (e: any) => {
+        return console.error(e);
+      });
 }
 
-export function playSong(
-  queue: any[],
-  msg: Discord.Message,
-  currentChannel?: Discord.VoiceChannel
-): void {
-  console.log("playSong function");
-  if (currentChannel) {
-    currentChannel
-      .join()
-      .then(connection => {
-        const dispatcher = connection
-          .playStream(
-            ytdl(queue[play.channelList.indexOf(currentChannel.id)][0].url, {
-              quality: "highestaudio",
-              highWaterMark: 1024 * 1024 * 10
-            })
-          )
-          .on("start", () => {
-            dispatcher.setVolume(volume.volume/100);
-            if(info.info==true){
-              msg.channel.send(
-                `>>> Now Playing: ${queue[play.channelList.indexOf(currentChannel.id)][0].title} with volume: ${volume.volume}%-----`
-              );
-            }
-          
-          })
-          .on("end", end => {
-            if(!loop.loop){
-              queue[play.channelList.indexOf(currentChannel.id)].shift();
-            }
-  
+export function popSong(guild:Discord.Guild,msgObject:Discord.Message){
+    const serverQueue = queue.get(guild.id);
+    if(!serverQueue.songs[0]){
+        msgObject.channel.send(">>> No song are playing at the moment.");
+        return;
+    }
+    if(serverQueue.songs.length==1){
+                   msgObject.channel.send(">>> I can't remove the only song in the queue.");
+                return;
+    }
+        const removedSong:any= serverQueue.songs.pop();
+        msgObject.channel.send(`>>> Successfully removed ${removedSong.title} from the queue.`)
 
-            if (
-              queue[play.channelList.indexOf(currentChannel.id)].length >= 1
-            ) {
-              return playSong(queue, msg, currentChannel);
-            } else {
-              play.isPlaying[
-                play.channelList.indexOf(currentChannel.id)
-              ] = false;
-
-              return currentChannel.leave();
-            }
-          })
-          .on("error", e => {
-            msg.channel.send("error has occured");
-            return console.error(e);
-          });
-      })
-      .catch(err => console.error(err));
-  }
 }

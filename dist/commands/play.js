@@ -13,10 +13,9 @@ const Discord = require("discord.js");
 const ytdl = require("ytdl-core");
 const youtubeSearch = require("youtube-search");
 const volume_1 = require("./volume");
-const loop_1 = require("./loop");
-const info_1 = require("./info");
 const Youtube = require("simple-youtube-api");
 const youtube = new Youtube(process.env.YOUTUBE_TOKEN);
+const queue = new Map();
 var opts = {
     maxResults: 10,
     key: process.env.YOUTUBE_TOKEN
@@ -26,179 +25,126 @@ class play {
         this._command = "play";
     }
     help() {
-        return "~play songname or URL|to play a song from Youtube, user must be in a voice channel.\n";
+        return "testing";
     }
     isThisCommand(command) {
         return command === this._command;
     }
     runCommand(args, msgObject, client) {
         return __awaiter(this, void 0, void 0, function* () {
-            const currentChannel = msgObject.member.voiceChannel;
             if (!args[0]) {
                 return;
             }
-            if (!msgObject.member.voiceChannel) {
-                msgObject.channel.send("Please join a voice channel first.");
-                return;
+            const serverQueue = queue.get(msgObject.guild.id);
+            const currentChannel = msgObject.member.voiceChannel;
+            if (!currentChannel) {
+                msgObject.channel.send("You must be in a voice channel to use this command.");
             }
             if (args[0].match(/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/)) {
-                console.log("Music bot:URL");
-                const url = args[0];
-                try {
-                    const urlQuery = url
-                        .replace(/(>|<)/gi, "")
-                        .split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
-                    const id = urlQuery[2].split(/[^0-9a-z_\-]/i)[0];
-                    const video = yield youtube.getVideoByID(id);
-                    if (video.raw.snippet.liveBroadcastContent === "live") {
-                        msgObject.channel.send("I don't support ive streams!");
-                        return;
-                    }
-                    const title = video.title;
-                    const song = {
-                        url,
-                        title,
-                        currentChannel
-                    };
-                    console.log("Music Bot:Entering queueSong function");
-                    this.queueSong(currentChannel, song, msgObject);
-                }
-                catch (err) {
-                    console.error(err);
-                    msgObject.channel.send("error occur");
-                    return;
-                }
+                const songInfo = yield ytdl.getInfo(args[0]);
+                var song = {
+                    title: songInfo.title,
+                    url: songInfo.video_url,
+                    channel: songInfo.author.name,
+                };
             }
             else {
-                try {
-                    console.log("Music bot: searching using song name");
-                    const songToSearch = args.join(" ");
-                    var songInfo = yield this.searchVideo(songToSearch);
-                    if (!songInfo) {
-                        msgObject.channel.send(`>>> There was an error searching for ${songToSearch}, please try something else`);
-                        return;
-                    }
-                    let songFound = false;
+                const songToSearch = args.join(" ");
+                const songInfo = yield youtubeSearch(songToSearch, opts);
+                if (songInfo.pageInfo.totalResults == 0) {
+                    msgObject.channel.send(">>> No song found.");
+                    return;
+                }
+                else {
                     for (var i = 0; i < 10; i++) {
                         if (songInfo.results[i].kind != undefined &&
                             songInfo.results[i].kind != "youtube#video") {
                             continue;
                         }
                         else {
-                            songFound = true;
                             break;
                         }
-                    }
-                    if (songFound == false) {
-                        msgObject.channel.send(">>> Song not found");
-                        return;
                     }
                     var song = {
                         title: songInfo.results[i].title,
                         url: songInfo.results[i].link,
-                        channel: songInfo.results[i].channelTitle,
-                        currentChannel
+                        channel: songInfo.results[i].channelTitle
                     };
                     const embed = new Discord.RichEmbed()
                         .setColor("RANDOM")
                         .setTitle(`${song.title}`)
                         .setDescription(`You searched for ${songToSearch}, here is what I found!\n${song.url}`)
                         .setFooter(`Channel Name:${song.channel}`);
-                    yield msgObject.channel.send({ embed });
+                    msgObject.channel.send({ embed });
                 }
-                catch (err) {
-                    console.error(err);
-                    return;
-                }
+            }
+            if (!serverQueue) {
+                const queueConstruct = {
+                    textChannel: msgObject.channel,
+                    voiceChannel: currentChannel,
+                    connection: null,
+                    songs: [],
+                    playing: true,
+                };
+                queue.set(msgObject.guild.id, queueConstruct);
+                queueConstruct.songs.push(song);
                 try {
-                    console.log("Music Bot:Entering queueSong function.");
-                    this.queueSong(currentChannel, song, msgObject);
+                    var connection = yield currentChannel.join();
+                    queueConstruct.connection = connection;
+                    playSong(msgObject.guild, queueConstruct.songs[0], msgObject);
                 }
                 catch (err) {
                     console.error(err);
+                    queue.delete(msgObject.guild.id);
+                    msgObject.channel.send(err);
                     return;
                 }
             }
-        });
-    }
-    searchVideo(songToSearch) {
-        return __awaiter(this, void 0, void 0, function* () {
-            console.log("entered searchVideo function");
-            const songInfo = yield youtubeSearch(songToSearch, opts);
-            if (songInfo.pageInfo.totalResults == 0) {
-                return null;
-            }
             else {
-                return songInfo;
-            }
-        });
-    }
-    queueSong(currentChannel, song, msgObject) {
-        return __awaiter(this, void 0, void 0, function* () {
-            console.log("MusicBot:entered queueSong function.");
-            if (play.channelList.indexOf(currentChannel.id) == -1) {
-                play.channelList.push(currentChannel.id);
-                play.bigQueue.push(new Array());
-                play.bigQueue[play.channelList.indexOf(currentChannel.id)].push(song);
-                play.isPlaying.push(false);
-            }
-            else {
-                play.bigQueue[play.channelList.indexOf(currentChannel.id)].push(song);
-            }
-            if (play.isPlaying[play.channelList.indexOf(currentChannel.id)] ==
-                false ||
-                typeof play.isPlaying[play.channelList.indexOf(currentChannel.id)] ==
-                    "undefined") {
-                play.isPlaying[play.channelList.indexOf(currentChannel.id)] = true;
-                return playSong(play.bigQueue, msgObject, currentChannel);
-            }
-            else if (play.isPlaying[play.channelList.indexOf(currentChannel.id)] == true) {
-                msgObject.channel.send(`${song.title} added to queue`);
+                serverQueue.songs.push(song);
+                console.log(serverQueue.songs);
+                msgObject.channel.send(`>>> ${song.title} has been added to the queue.`);
                 return;
             }
         });
     }
 }
 exports.default = play;
-play.bigQueue = [];
-play.channelList = [];
-play.isPlaying = [];
-function playSong(queue, msg, currentChannel) {
-    console.log("playSong function");
-    if (currentChannel) {
-        currentChannel
-            .join()
-            .then(connection => {
-            const dispatcher = connection
-                .playStream(ytdl(queue[play.channelList.indexOf(currentChannel.id)][0].url, {
-                quality: "highestaudio",
-                highWaterMark: 1024 * 1024 * 10
-            }))
-                .on("start", () => {
-                dispatcher.setVolume(volume_1.default.volume / 100);
-                if (info_1.default.info == true) {
-                    msg.channel.send(`>>> Now Playing: ${queue[play.channelList.indexOf(currentChannel.id)][0].title} with volume: ${volume_1.default.volume}%-----`);
-                }
-            })
-                .on("end", end => {
-                if (!loop_1.default.loop) {
-                    queue[play.channelList.indexOf(currentChannel.id)].shift();
-                }
-                if (queue[play.channelList.indexOf(currentChannel.id)].length >= 1) {
-                    return playSong(queue, msg, currentChannel);
-                }
-                else {
-                    play.isPlaying[play.channelList.indexOf(currentChannel.id)] = false;
-                    return currentChannel.leave();
-                }
-            })
-                .on("error", e => {
-                msg.channel.send("error has occured");
-                return console.error(e);
-            });
-        })
-            .catch(err => console.error(err));
+function playSong(guild, song, msgObject) {
+    const serverQueue = queue.get(guild.id);
+    if (!song) {
+        serverQueue.voiceChannel.leave();
+        queue.delete(guild.id);
+        return;
     }
+    const dispatcher = serverQueue.connection.playStream(ytdl(song.url), {
+        quality: "highestaudio",
+        highWaterMark: 1024 * 1024 * 10
+    }).on('start', () => {
+        dispatcher.setVolume(volume_1.default.volume / 100);
+        msgObject.channel.send(`>>> Now playing ${song.title} with volume ${volume_1.default.volume}%`);
+    })
+        .on('end', () => {
+        console.log('Music ended.');
+        serverQueue.songs.shift();
+        playSong(guild, serverQueue.songs[0], msgObject);
+    })
+        .on("error", (e) => {
+        return console.error(e);
+    });
 }
-exports.playSong = playSong;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicGxheS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9jb21tYW5kcy9wbGF5LnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7O0FBQUEsc0NBQXNDO0FBRXRDLGtDQUFrQztBQUNsQyxnREFBZ0Q7QUFDaEQscUNBQThCO0FBQzlCLGlDQUEwQjtBQUMxQixpQ0FBMEI7QUFDMUIsTUFBTSxPQUFPLEdBQUcsT0FBTyxDQUFDLG9CQUFvQixDQUFDLENBQUM7QUFDOUMsTUFBTSxPQUFPLEdBQUcsSUFBSSxPQUFPLENBQUMsT0FBTyxDQUFDLEdBQUcsQ0FBQyxhQUFhLENBQUMsQ0FBQztBQUV2RCxJQUFJLElBQUksR0FBdUM7SUFDN0MsVUFBVSxFQUFFLEVBQUU7SUFDZCxHQUFHLEVBQUUsT0FBTyxDQUFDLEdBQUcsQ0FBQyxhQUFhO0NBQy9CLENBQUM7QUFDRixNQUFxQixJQUFJO0lBQXpCO1FBSW1CLGFBQVEsR0FBRyxNQUFNLENBQUM7SUFnS3JDLENBQUM7SUE5SkMsSUFBSTtRQUNGLE9BQU8sdUZBQXVGLENBQUM7SUFDakcsQ0FBQztJQUVELGFBQWEsQ0FBQyxPQUFlO1FBQzNCLE9BQU8sT0FBTyxLQUFLLElBQUksQ0FBQyxRQUFRLENBQUM7SUFFbkMsQ0FBQztJQUVLLFVBQVUsQ0FDZCxJQUFjLEVBQ2QsU0FBMEIsRUFDMUIsTUFBc0I7O1lBRXRCLE1BQU0sY0FBYyxHQUFHLFNBQVMsQ0FBQyxNQUFNLENBQUMsWUFBWSxDQUFDO1lBRXJELElBQUcsQ0FBQyxJQUFJLENBQUMsQ0FBQyxDQUFDLEVBQUM7Z0JBQ1IsT0FBTzthQUNWO1lBQ0QsSUFBRyxDQUFDLFNBQVMsQ0FBQyxNQUFNLENBQUMsWUFBWSxFQUFDO2dCQUNoQyxTQUFTLENBQUMsT0FBTyxDQUFDLElBQUksQ0FBQyxvQ0FBb0MsQ0FBQyxDQUFDO2dCQUM3RCxPQUFPO2FBQ1I7WUFDRCxJQUNFLElBQUksQ0FBQyxDQUFDLENBQUMsQ0FBQyxLQUFLLENBQUMs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
+function popSong(guild, msgObject) {
+    const serverQueue = queue.get(guild.id);
+    if (!serverQueue.songs[0]) {
+        msgObject.channel.send(">>> No song are playing at the moment.");
+        return;
+    }
+    if (serverQueue.songs.length == 1) {
+        msgObject.channel.send(">>> I can't remove the only song in the queue.");
+        return;
+    }
+    const removedSong = serverQueue.songs.pop();
+    msgObject.channel.send(`>>> Successfully removed ${removedSong.title} from the queue.`);
+}
+exports.popSong = popSong;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicGxheS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9jb21tYW5kcy9wbGF5LnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7O0FBQUEsc0NBQXNDO0FBRXRDLGtDQUFrQztBQUNsQyxnREFBZ0Q7QUFDaEQscUNBQThCO0FBRzlCLE1BQU0sT0FBTyxHQUFHLE9BQU8sQ0FBQyxvQkFBb0IsQ0FBQyxDQUFDO0FBQzlDLE1BQU0sT0FBTyxHQUFHLElBQUksT0FBTyxDQUFDLE9BQU8sQ0FBQyxHQUFHLENBQUMsYUFBYSxDQUFDLENBQUM7QUFDdkQsTUFBTSxLQUFLLEdBQUcsSUFBSSxHQUFHLEVBQUUsQ0FBQztBQUV4QixJQUFJLElBQUksR0FBdUM7SUFDN0MsVUFBVSxFQUFFLEVBQUU7SUFDZCxHQUFHLEVBQUUsT0FBTyxDQUFDLEdBQUcsQ0FBQyxhQUFhO0NBQy9CLENBQUM7QUFFRixNQUFxQixJQUFJO0lBQXpCO1FBRXFCLGFBQVEsR0FBRyxNQUFNLENBQUM7SUEyR3ZDLENBQUM7SUF6R0csSUFBSTtRQUNBLE9BQU8sU0FBUyxDQUFDO0lBQ3JCLENBQUM7SUFFRCxhQUFhLENBQUMsT0FBZTtRQUMxQixPQUFPLE9BQU8sS0FBSyxJQUFJLENBQUMsUUFBUSxDQUFDO0lBQ3BDLENBQUM7SUFFSyxVQUFVLENBQUMsSUFBYyxFQUFFLFNBQTBCLEVBQUUsTUFBc0I7O1lBQy9FLElBQUcsQ0FBQyxJQUFJLENBQUMsQ0FBQyxDQUFDLEVBQUM7Z0JBQ1IsT0FBTzthQUNWO1lBRUQsTUFBTSxXQUFXLEdBQUcsS0FBSyxDQUFDLEdBQUcsQ0FBQyxTQUFTLENBQUMsS0FBSyxDQUFDLEVBQUUsQ0FBQyxDQUFDO1lBQ2xELE1BQU0sY0FBYyxHQUFHLFNBQVMsQ0FBQyxNQUFNLENBQUMsWUFBWSxDQUFDO1lBR3JELElBQUcsQ0FBQyxjQUFjLEVBQUM7Z0JBQ2YsU0FBUyxDQUFDLE9BQU8sQ0FBQyxJQUFJLENBQUMscURBQXFELENBQUMs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
