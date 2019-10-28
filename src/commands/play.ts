@@ -38,6 +38,7 @@ export default class play implements IBotCommand {
         if(!currentChannel){
             msgObject.channel.send("You must be in a voice channel to use this command.");
         }
+
         if(args[0].match(/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/)){
             const songInfo = await ytdl.getInfo(args[0]);
             var song = {
@@ -127,6 +128,8 @@ export default class play implements IBotCommand {
 
 function playSong(guild:Discord.Guild,song:any,msgObject:Discord.Message) {
     const serverQueue = queue.get(guild.id);
+    
+ 
 
     if(!song){
         serverQueue.voiceChannel.leave();
@@ -149,6 +152,7 @@ function playSong(guild:Discord.Guild,song:any,msgObject:Discord.Message) {
     .on("error", (e: any) => {
         return console.error(e);
       });
+      
 }
 
 export function popSong(guild:Discord.Guild,msgObject:Discord.Message){
@@ -165,3 +169,38 @@ export function popSong(guild:Discord.Guild,msgObject:Discord.Message){
         msgObject.channel.send(`>>> Successfully removed ${removedSong.title} from the queue.`)
 
 }
+export function leaveChannel(guild:Discord.Guild,msgObject:Discord.Message){
+const serverQueue = queue.get(guild.id);
+
+serverQueue.songs=[];
+if(!msgObject.guild.voiceConnection){
+    msgObject.channel.send(">>> The bot is not in any voice channel.");
+    return;
+}
+if(msgObject.guild.voiceConnection.dispatcher){
+    msgObject.guild.voiceConnection.dispatcher.end();
+}
+
+
+
+}
+
+export function queueList(guild:Discord.Guild,msgObject:Discord.Message){
+    const serverQueue = queue.get(guild.id);
+    var Once = false;
+    const embed = new Discord.RichEmbed()
+    .setAuthor("===================================================")
+    .setColor("RANDOM")
+    .setDescription(`Now Playing:\n[${serverQueue.songs[0].title}](${serverQueue.songs[0].url})`)
+
+    for(let i=1;i<serverQueue.songs.length;i++){
+        if(!Once){
+            Once=true;
+            embed.addField("\u200b","Up Next",false)
+        }
+        embed.addField("\u200b",i+`. [${serverQueue.songs[i].title}](${serverQueue.songs[i].url})`,false);
+    }
+    msgObject.channel.send(embed);
+ 
+}
+

@@ -29,6 +29,8 @@ export let config = {
         "skills",
         "date",
         "souls",
+        "leave",
+        "queue"
   
         
 

@@ -42,6 +42,7 @@ client.on("message",msg=>{
     //Handle Command
     handleCommand(msg);
 })
+
 async function help(msg:Discord.Message){
     var commandList:string=">>> ";
     for(const commandsClass of commands){
