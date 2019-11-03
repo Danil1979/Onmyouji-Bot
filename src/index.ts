@@ -3,6 +3,7 @@ import * as ConfigFile from "./config";
 import { IBotCommand } from "./api";
 import { initialize}  from "./commands/update";
 import { setDate } from "./commands/date";
+import { leaveChannel } from "./commands/play";
 require('dotenv').config();
 
 
@@ -23,9 +24,18 @@ client.on("ready", async ()=>{
     setDate(client);
     console.log("Ready!!");
 })
+
 client.on("rateLimit",msg=>{
     console.log("ATTENTION!HITTING RATE LIMIT "+msg);
 })
+client.on("voiceStateUpdate",(_oldmember,newmember)=>{
+
+    if(newmember.user.id==client.user.id){
+        if(!newmember.voiceChannel){
+            leaveChannel(newmember.guild);
+        }
+    }
+    })
 client.on("message",msg=>{
 
     //if messager = bot, ignore it

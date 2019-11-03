@@ -33,10 +33,14 @@ export default class play implements IBotCommand {
 
         const serverQueue = queue.get(msgObject.guild.id);
         const currentChannel = msgObject.member.voiceChannel;
+        msgObject.channel.send(">>> Please wait...").then(msg =>{
+            (msg as Discord.Message).delete(5000);
+        })
 
-
+        
         if(!currentChannel){
             msgObject.channel.send("You must be in a voice channel to use this command.");
+            return;
         }
 
         if(args[0].match(/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/)){
@@ -120,7 +124,7 @@ export default class play implements IBotCommand {
             msgObject.channel.send(`>>> ${song.title} has been added to the queue.`);
             return;
         }
-
+ 
     }
 
 
@@ -169,17 +173,24 @@ export function popSong(guild:Discord.Guild,msgObject:Discord.Message){
         msgObject.channel.send(`>>> Successfully removed ${removedSong.title} from the queue.`)
 
 }
-export function leaveChannel(guild:Discord.Guild,msgObject:Discord.Message){
+export function leaveChannel(guild:Discord.Guild,msgObject?:Discord.Message){
 const serverQueue = queue.get(guild.id);
-
-serverQueue.songs=[];
-if(!msgObject.guild.voiceConnection){
-    msgObject.channel.send(">>> The bot is not in any voice channel.");
+if(serverQueue){
+    serverQueue.songs=[];
+    if(!guild.voiceConnection&&msgObject){
+        msgObject.channel.send(">>> The bot is not in any voice channel.");
+        return;
+    }
+    if(guild.voiceConnection.dispatcher){
+        guild.voiceConnection.dispatcher.end();
+    }
+}else if(guild.voiceConnection&&guild.voiceConnection.channel){
+    guild.voiceConnection.channel.leave();
+    return;
+}else{
     return;
 }
-if(msgObject.guild.voiceConnection.dispatcher){
-    msgObject.guild.voiceConnection.dispatcher.end();
-}
+
 
 
 
