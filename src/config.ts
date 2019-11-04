@@ -30,7 +30,9 @@ export let config = {
         "date",
         "souls",
         "leave",
-        "queue"
+        "queue",
+        "bounties",
+        "clues"
   
         
 

@@ -10,6 +10,8 @@ export default class update implements IBotCommand {
   static skillArray: any[][] = [];
   static TimerArray: any[][] = [];
   static soulArray: any[][] = [];
+  static bountiesArray: any[][]=[];
+  static cluesArray: any[][] = [];  
   private readonly _command = "update";
 
   help(): string {
@@ -35,19 +37,27 @@ async function gsrun(gclient: JWT): Promise<void> {
    const gclientapi = google.sheets({ version: "v4", auth: gclient });
   const opt = {
     spreadsheetId: "1Ff5Jkwizib0XyOFSEJzWbiWkqJgYxZJdtMjWStzj5WM",
-    range: "Onmyouji1"
+    range: "Stats"
   };
   const skill = {
     spreadsheetId: "1Ff5Jkwizib0XyOFSEJzWbiWkqJgYxZJdtMjWStzj5WM",
-    range: "Skill"
+    range: "Skills"
   };
   const timer = {
     spreadsheetId: "1Ff5Jkwizib0XyOFSEJzWbiWkqJgYxZJdtMjWStzj5WM",
-    range: "Timer"
+    range: "Timers"
   }
   const soul = {
     spreadsheetId: "1Ff5Jkwizib0XyOFSEJzWbiWkqJgYxZJdtMjWStzj5WM",
-    range: "Soul"
+    range: "Souls"
+  }
+  const bounties = {
+    spreadsheetId: "1Ff5Jkwizib0XyOFSEJzWbiWkqJgYxZJdtMjWStzj5WM",
+    range: "Bounties!A:E"
+  }
+  const clues = {
+    spreadsheetId: "1Ff5Jkwizib0XyOFSEJzWbiWkqJgYxZJdtMjWStzj5WM",
+    range: "Bounties!A:B"
   }
   const updateOption = {
   spreadsheetId: "1Ff5Jkwizib0XyOFSEJzWbiWkqJgYxZJdtMjWStzj5WM",
@@ -60,15 +70,20 @@ if(date.newDate === undefined || date.newDate.length == 0){
     let data = await gclientapi.spreadsheets.values.get(opt);
     let skillData = await gclientapi.spreadsheets.values.get(skill);
     let timerData = await gclientapi.spreadsheets.values.get(timer);
+    let bountiesData = await gclientapi.spreadsheets.values.get(bounties);
+    let cluesData = await gclientapi.spreadsheets.values.get(clues);
     update.soulArray = soulData.data.values || [];
     update.dataArray = data.data.values || [];
     update.skillArray = skillData.data.values || [];
     update.TimerArray =   timerData.data.values || [];
+    update.bountiesArray = bountiesData.data.values || [];
+    update.cluesArray = cluesData.data.values || [];
     update.dataArray.shift();
     update.skillArray.shift();
     update.TimerArray.shift();
-
- return;
+    update.bountiesArray.shift();
+    update.cluesArray.shift();
+    return;
 }else{
 
     let res = await gclientapi.spreadsheets.values.update(updateOption);
