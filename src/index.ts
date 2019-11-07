@@ -25,10 +25,15 @@ client.on("ready", async ()=>{
 })
 
 client.on("rateLimit",msg=>{
-    console.log("ATTENTION!HITTING RATE LIMIT ");
+    if(msg.limit==1){
+        console.log("react rate limit");
+    }else{    console.log("ATTENTION!HITTING RATE LIMIT ");
     console.log(msg.limit);
     console.log(msg.method);
     console.log(msg.timeDifference);
+
+    }
+
 })
 client.on("voiceStateUpdate",(_oldmember,newmember)=>{
 

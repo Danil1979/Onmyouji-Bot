@@ -19,14 +19,15 @@ export default class skills implements IBotCommand {
         if(!args[0]){
           return;
       }
-      accessSheet(shikiQuery,msgObject,false);
+      accessSheet(shikiQuery,msgObject,client.user.id);
+      // console.log(client.user.id);
     }
 
 
 
 } 
 
-function accessSheet(shikiQuery:string,msgObject:Discord.Message,retried:boolean){
+function accessSheet(shikiQuery:string,msgObject:Discord.Message,id:string){
     let shikiArray=[];
     let shiki:boolean=false;
     for(var i=0;i<update.skillArray.length;i++){
@@ -94,7 +95,7 @@ if(shiki){
       });
 
  
-      sendMessage(embedArray,msgObject);
+      sendMessage(embedArray,msgObject,id);
 
 
 
@@ -166,7 +167,7 @@ function format(tempArray:any[][]):Discord.RichEmbed{
     return embed;
   }
 
-  async function sendMessage(embedArray:Discord.RichEmbed[],msgObject:Discord.Message){
+  async function sendMessage(embedArray:Discord.RichEmbed[],msgObject:Discord.Message,id:string){
 
    const messageID= await msgObject.channel.send(embedArray[0]).then(msg =>{
         return (msg as Discord.Message).id;
@@ -174,24 +175,24 @@ function format(tempArray:any[][]):Discord.RichEmbed{
   const msg= await msgObject.channel.fetchMessage(messageID);
     
 setTimeout(() => {
-    sendMessage2(msg,msgObject,embedArray);
+    sendMessage2(msg,msgObject,embedArray,id);
 }, 500);
  
 
   }
 
-  async function sendMessage2(msg:Discord.Message,msgObject:Discord.Message,embedArray:Discord.RichEmbed[]){
+  async function sendMessage2(msg:Discord.Message,msgObject:Discord.Message,embedArray:Discord.RichEmbed[],id:string){
  
     await msg.react('👍').then(() => msg.react('👎'));
     const filter = (reaction: { emoji: { name: string; }; }, user: { id: string; }) => {
         return ['👍', '👎'].includes(reaction.emoji.name) && user.id === msgObject.author.id;
     };
-    messageReact(filter,msg,embedArray,0)
+    messageReact(filter,msg,embedArray,0,id)
 
   }
 
   
-  function messageReact(filter:any,msg:Discord.Message,embedArray:Discord.RichEmbed[],index:number){
+  function messageReact(filter:any,msg:Discord.Message,embedArray:Discord.RichEmbed[],index:number,id:string){
 
 
     msg.awaitReactions(filter, { max:1, time: 300000, errors: ['time'] })
@@ -202,7 +203,7 @@ setTimeout(() => {
             
         
             botReaction.users.forEach(user => {
-                if(user.id!="631907096555946028"){
+                if(user.id!=id){
                     botReaction.remove(user.id);
                 }
             });
@@ -217,7 +218,7 @@ setTimeout(() => {
             
        
             msg.edit(embedArray[index]);
-            messageReact(filter,msg,embedArray,index);
+            messageReact(filter,msg,embedArray,index,id);
         } else {
             index++;
             if(index>=3){
@@ -225,7 +226,7 @@ setTimeout(() => {
             }
      
             msg.edit(embedArray[index]);
-            messageReact(filter,msg,embedArray,index);
+            messageReact(filter,msg,embedArray,index,id);
         }
     })
     .catch(collected => {
