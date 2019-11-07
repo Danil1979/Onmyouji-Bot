@@ -184,8 +184,8 @@ setTimeout(() => {
   async function sendMessage2(msg:Discord.Message,msgObject:Discord.Message,embedArray:Discord.RichEmbed[],id:string){
  
     await msg.react('👍').then(() => msg.react('👎'));
-    const filter = (reaction: { emoji: { name: string; }; }) => {
-        return ['👍', '👎'].includes(reaction.emoji.name) ;
+    const filter = (reaction: { emoji: { name: string; }; }, user: { id: string; }) => {
+        return ['👍', '👎'].includes(reaction.emoji.name) && user.id != id;
     };
     messageReact(filter,msg,embedArray,0,id)
 
