@@ -167,7 +167,7 @@ function format(tempArray:any[][],msgObject:Discord.Message):Discord.RichEmbed{
     
 setTimeout(() => {
     sendMessage2(msg,msgObject,embedArray);
-}, 5000);
+}, 500);
  
 
   }
@@ -188,20 +188,44 @@ setTimeout(() => {
 
     msg.awaitReactions(filter, { max:1, time: 60000, errors: ['time'] })
     .then(collected => {
-        const reaction = collected.first();
-   
-        if (reaction.emoji.name === '👍') {
+        const botReaction = collected.first();
+        const temp = collected.last();
+        for(let i=0;i<collected.size;i++){
+            console.log(i);
+           collected.first().remove("222728476816310272")
+            
+        }
+
+            
+            // collected.forEach(reaction => {
+            // //    if (reaction!=botReaction){
+            //     console.log("test");
+            //        reaction.remove();
+            // //    }
+            // });
+        
+        if (botReaction.emoji.name === '👍') {
             index--;
+            if(index<=-1){
+                index=3;
+            }
+            
+            
+       
             msg.edit(embedArray[index]);
             messageReact(filter,msg,embedArray,index);
         } else {
             index++;
+            if(index>=3){
+                index=0;
+            }
+     
             msg.edit(embedArray[index]);
             messageReact(filter,msg,embedArray,index);
         }
     })
     .catch(collected => {
-        console.log("neither");
+        msg.delete();
     });
 
 }
