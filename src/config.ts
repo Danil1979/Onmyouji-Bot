@@ -32,7 +32,9 @@ export let config = {
         "leave",
         "queue",
         "bounties",
-        "clues"
+        "clues",
+        "test",
+        "test2"
   
         
 

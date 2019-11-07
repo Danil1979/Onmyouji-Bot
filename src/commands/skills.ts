@@ -1,7 +1,7 @@
 import * as Discord from "discord.js";
 import {IBotCommand} from "../api";
 import update, { initialize } from "./update";
-
+const queue = new Map();
 export default class skills implements IBotCommand {
 
     private readonly _command = "skills";
@@ -15,6 +15,7 @@ export default class skills implements IBotCommand {
     }
 
     async runCommand(args: string[], msgObject: Discord.Message, client: Discord.Client): Promise<void> {
+
       const shikiQuery = args.join(" ");
       if(!args[0]){
         return;
@@ -24,6 +25,8 @@ export default class skills implements IBotCommand {
     this.accessSheet(shikiQuery,msgObject,false);
     }
     async accessSheet(shikiQuery:string,msgObject:Discord.Message,retried:boolean){
+     const serverQueue = queue.get(msgObject.guild.id);
+     const shikiQueue = new Map();
       var shiki:boolean=false;
       var queryArray=[];
 
@@ -37,16 +40,22 @@ export default class skills implements IBotCommand {
               }
               if(update.skillArray[i][0].toLowerCase()==shikiQuery.toLowerCase()){
                    queryArray.push(update.skillArray[i]);
+                   shikiQueue.set(update.skillArray[i][0],true);
                    shiki=true;
                   break;
               }
             
               if(aliasArray.indexOf(shikiQuery.toLowerCase())!=-1){
                 queryArray.push(update.skillArray[i]);
+                shikiQueue.set(update.skillArray[i][0],true);
                 shiki=true;
                   break;
            }     
       }
+     const shikiCheck= shikiQueue.get(update.skillArray[i][0]);
+
+
+     //possible redundant
       for(let x=i+1;x<update.skillArray.length;x++){
         if(update.skillArray[x][0]!=""){
 
@@ -55,8 +64,8 @@ export default class skills implements IBotCommand {
         queryArray.push(update.skillArray[x]);
       }
    
-      if(shiki){
-
+      if(shiki&&shikiCheck){
+        console.log("shikiCheck pass");
         var tempArray=[];
         var skill=queryArray[0][3];
           for(let i=0;i<queryArray.length;i++){
@@ -65,10 +74,12 @@ export default class skills implements IBotCommand {
                 tempArray.push(queryArray[i]);
 
               }else{
-
-                this.format(tempArray,msgObject);
+                //when its not the same skill
+                
                 skill=queryArray[i][3];
+                //empty tempArray
                 tempArray.splice(0,queryArray.length);
+
                 tempArray.push(queryArray[i]);
     
               }
@@ -132,14 +143,22 @@ export default class skills implements IBotCommand {
     .setColor("RANDOM")
     .addField("Type",shikiSkill.type,true)
     .addField("Onibi",shikiSkill.onibi,true)
-    .addField(level,skillLevel,true)
-    .addField(effect,skillUpgrade,true)
+    .addField(level+" and "+effect,skillLevel+" "+skillUpgrade,false)
+    // .addField(effect,skillUpgrade,true)
     for(let i=0;i<noteArray.length;i++){
       embed.addField(noteArray[i],noteArrayValue[i],true);
     }
-    msgObject.channel.send(embed)
-    .catch(console.error);
+    // msgObject.channel.send(embed)
+    // .catch(console.error);
+    manageMessage(embed,msgObject);
   }
 
 
 } 
+
+function manageMessage(embed:Discord.RichEmbed,msgObject:Discord.Message){
+ const msgID= msgObject.channel.send(embed).then(msg =>{
+    return (msg as Discord.Message).id;
+  })
+
+}

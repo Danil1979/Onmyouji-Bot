@@ -5,8 +5,7 @@ import { initialize}  from "./commands/update";
 import { setDate } from "./commands/date";
 import { leaveChannel } from "./commands/play";
 require('dotenv').config();
-
-
+//test
 const client: Discord.Client = new Discord.Client();
 
 
@@ -26,7 +25,10 @@ client.on("ready", async ()=>{
 })
 
 client.on("rateLimit",msg=>{
-    console.log("ATTENTION!HITTING RATE LIMIT "+msg);
+    console.log("ATTENTION!HITTING RATE LIMIT ");
+    console.log(msg.limit);
+    console.log(msg.method);
+    console.log(msg.timeDifference);
 })
 client.on("voiceStateUpdate",(_oldmember,newmember)=>{
 
