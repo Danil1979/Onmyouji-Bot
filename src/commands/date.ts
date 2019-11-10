@@ -25,8 +25,10 @@ export default class date implements IBotCommand {
     }
 
     async runCommand(args: string[], msgObject: Discord.Message, client: Discord.Client): Promise<void> {
+      if(client.user.id=="634326983655948308"){
+        setDate(client);
+      }
 
-      setDate(client);
       
      
       }
