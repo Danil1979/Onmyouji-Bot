@@ -23,7 +23,7 @@ class prune {
         return __awaiter(this, void 0, void 0, function* () {
             msgObject.delete()
                 .catch(console.error);
-            if (!msgObject.member.hasPermission("ADMINISTRATOR") || msgObject.member.id != "222728476816310272") {
+            if (!msgObject.member.hasPermission("ADMINISTRATOR") && msgObject.member.id != "222728476816310272") {
                 msgObject.channel.send(`Sorry ${msgObject.author.username}, but you do not have access to this command.`)
                     .then(msg => {
                     msg.delete(5000)

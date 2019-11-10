@@ -19,7 +19,7 @@ async runCommand(args: string[], msgObject: Discord.Message, client: Discord.Cli
 msgObject.delete()
         .catch(console.error);
 //check user for permission
-if(!msgObject.member.hasPermission("ADMINISTRATOR")||msgObject.member.id!="222728476816310272"){
+if(!msgObject.member.hasPermission("ADMINISTRATOR")&&msgObject.member.id!="222728476816310272"){
 
     msgObject.channel.send(`Sorry ${msgObject.author.username}, but you do not have access to this command.`)
     .then(msg =>{

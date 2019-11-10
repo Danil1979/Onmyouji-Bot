@@ -61,7 +61,7 @@ async function gsrun(gclient: JWT): Promise<void> {
   }
   const updateOption = {
   spreadsheetId: "1Ff5Jkwizib0XyOFSEJzWbiWkqJgYxZJdtMjWStzj5WM",
-  range: "Timer!A2",
+  range: "Timers!A2",
   valueInputOption: 'USER_ENTERED',
   resource: {values:date.newDate}
 }

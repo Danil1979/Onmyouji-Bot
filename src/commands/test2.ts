@@ -14,9 +14,17 @@ export default class test2 implements IBotCommand {
     }
 
     async runCommand(args: string[], msgObject: Discord.Message, client: Discord.Client): Promise<void> {
-      msgObject.channel.send("success").then(msg=>{
-          (msg as Discord.Message).react('👍');
-      });
+        const guild =client.guilds.get("404154708572373029");//Elysium guild ID
+        if(!guild){
+         console.log("Guild not found");
+          return;
+       
+        }
+  
+        const nameChannel=guild.channels.get("634317691905376256");
+        if(nameChannel){
+            nameChannel.setName("🍖 "+"Time until Feast");
+        }
     }
 
 
