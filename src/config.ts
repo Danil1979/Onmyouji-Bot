@@ -34,7 +34,8 @@ export let config = {
         "bounties",
         "clues",
         "test",
-        "test2"
+        "test2",
+        "emoji"
   
         
 
