@@ -36,7 +36,8 @@ export let config = {
         "test",
         "test2",
         "emoji",
-        "help"
+        "help",
+        "ask"
   
         
 
