@@ -51,33 +51,11 @@ client.on("message",msg=>{
     if(msg.channel.type=="dm"){return;}
     //if message did not start with ~
     if(!msg.content.startsWith(ConfigFile.config.prefix)) {return;}
-
-    if(msg.content.toLowerCase()=="~help"){
-        help(msg);
-        return;
-    }
     //Handle Command
     handleCommand(msg);
 })
 
-async function help(msg:Discord.Message){
-    var commandList:string=">>> ";
-    for(const commandsClass of commands){
-        //attempt to execute commands
-        try {
-           
-       
-            //Pause execution whilst we run the command's coce
-            commandList +=await commandsClass.help();
-            
-        }
-        catch(exception){
 
-            console.log(exception);
-        }
-    }
-    msg.channel.send(commandList);
-}
 async function handleCommand(msg:Discord.Message){
 //Split the string into command and all of the args
     let command = msg.content.split(" ")[0].replace(ConfigFile.config.prefix, "").toLowerCase();
