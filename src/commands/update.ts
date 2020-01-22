@@ -4,7 +4,7 @@ import { google } from "googleapis";
 import { JWT } from "google-auth-library";
 import { promises } from "dns";
 import date from "./date";
-
+import birthday from "./birthday"
 export default class update implements IBotCommand {
   static dataArray: any[][] = [];
   static skillArray: any[][] = [];
@@ -12,6 +12,7 @@ export default class update implements IBotCommand {
   static soulArray: any[][] = [];
   static bountiesArray: any[][]=[];
   static cluesArray: any[][] = [];  
+  static birthdayArray: any[][] = [];  
   private readonly _command = "update";
 
   help(): string {
@@ -65,13 +66,19 @@ async function gsrun(gclient: JWT): Promise<void> {
   valueInputOption: 'USER_ENTERED',
   resource: {values:date.newDate}
 }
+const birthdayDate = {
+  spreadsheetId: "1Qk9bphpJgYi1ZY9mSXx7IdTG70HwL7R0KK35OtvZbtg",
+  range:"Date"
+}
 if(date.newDate === undefined || date.newDate.length == 0){
+    let birthdayData = await gclientapi.spreadsheets.values.get(birthdayDate);
     let soulData =await gclientapi.spreadsheets.values.get(soul);
     let data = await gclientapi.spreadsheets.values.get(opt);
     let skillData = await gclientapi.spreadsheets.values.get(skill);
     let timerData = await gclientapi.spreadsheets.values.get(timer);
     let bountiesData = await gclientapi.spreadsheets.values.get(bounties);
     let cluesData = await gclientapi.spreadsheets.values.get(clues);
+    update.birthdayArray = birthdayData.data.values || [];
     update.soulArray = soulData.data.values || [];
     update.dataArray = data.data.values || [];
     update.skillArray = skillData.data.values || [];
@@ -83,6 +90,7 @@ if(date.newDate === undefined || date.newDate.length == 0){
     update.TimerArray.shift();
     update.bountiesArray.shift();
     update.cluesArray.shift();
+    update.birthdayArray.shift();//GJR
     return;
 }else{
 
