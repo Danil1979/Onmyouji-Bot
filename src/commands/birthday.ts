@@ -38,13 +38,14 @@ async function countdown(client: Discord.Client){
     const stringNow = moment(now);
     console.log(now);
 
-    const guild =client.guilds.get("378048380200288257");//Elysium guild ID
+    const guild =client.guilds.get("378048380200288257");//GJR guild ID
 
     if(!guild){
-        console.log("Guild not found");
+        console.log("GJR Guild not found");
         return;
     }
     const end = update.birthdayArray[0];
+    console.log(end);
     const stringEnd = moment(end);
     const hours = createDisplayTime(stringNow,stringEnd);
 
