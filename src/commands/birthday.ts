@@ -34,7 +34,7 @@ export function setBirthday(client: Discord.Client){
   }
 
 async function countdown(client: Discord.Client){
-    const now = moment.utc().format("YYYY-MM-DD HH:mm");
+    const now = moment.utc().format("YYYY-MM-DD");
     const stringNow = moment(now);
     console.log(now);
 
@@ -45,8 +45,8 @@ async function countdown(client: Discord.Client){
         return;
     }
     const end = update.birthdayArray[0];
-    console.log(end);
-    const stringEnd = moment(end);
+    console.log(end[0]);
+    const stringEnd = moment(end[0]);
     const hours = createDisplayTime(stringNow,stringEnd);
 
     const timerChannel=guild.channels.get("669532629502001152");
@@ -55,14 +55,15 @@ async function countdown(client: Discord.Client){
         console.log("timerChannel not found");
         return;
     }
-    timerChannel.setName(	"⏱ "+daysDisplay+"D "+hoursDisplay+"H "+minsDisplay+"M");
+    timerChannel.setName(	"⏱ "+daysDisplay+"D ");
   }
 
 function createDisplayTime(now:moment.Moment,end:moment.Moment):number{
-  
+
     const duration = moment.duration(end.diff(now));
-    const hours = duration.asHours();
   
+    const hours = duration.asHours();
+    console.log(hours)
     daysDisplay=Math.floor(hours/24);
     var Remainder=hours % 24;
     var Hour=Math.floor(Remainder);
