@@ -2,3 +2,5 @@ src/commands/commandTemplate.ts
 dist/commands/commandTemplate.js
 .env
 credentials.json
+dist
+node_modules
