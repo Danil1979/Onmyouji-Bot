@@ -33,7 +33,6 @@ export let config = {
         "queue",
         "bounties",
         "clues",
-        "test",
         "test2",
         "emoji",
         "help",
