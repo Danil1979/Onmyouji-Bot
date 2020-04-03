@@ -4,7 +4,6 @@ import { IBotCommand } from "./api";
 import { initialize}  from "./commands/update";
 import { setDate } from "./commands/date";
 import { leaveChannel } from "./commands/play";
-import {setBirthday} from "./commands/birthday"
 require('dotenv').config();
 //test
 const client: Discord.Client = new Discord.Client();
@@ -21,8 +20,7 @@ client.on("ready", async ()=>{
     //bot activity
     client.user.setActivity("Ring Toss!", {type:"PLAYING" });
    await initialize();
-    // setDate(client);
-    setBirthday(client);
+
     
     console.log("Ready!!");
 })

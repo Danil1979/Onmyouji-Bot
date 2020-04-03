@@ -4,7 +4,7 @@ import { google } from "googleapis";
 import { JWT } from "google-auth-library";
 import { promises } from "dns";
 import date from "./date";
-import birthday from "./birthday"
+
 export default class update implements IBotCommand {
   static dataArray: any[][] = [];
   static skillArray: any[][] = [];
