@@ -15,9 +15,7 @@ export default class testCommand implements IBotCommand {
 
     async runCommand(args: string[], msgObject: Discord.Message, client: Discord.Client): Promise<void> {
         var unirest = require("unirest");
-        if(!args[0]){
-            return;
-        }
+    
         new Promise((resolve) =>{
             unirest.get("https://coronavirus-monitor.p.rapidapi.com/coronavirus/latest_stat_by_country.php")
         .headers({
@@ -25,7 +23,7 @@ export default class testCommand implements IBotCommand {
             "x-rapidapi-key": process.env.RAPIDAPIKEY
         })
         .query({
-            "country": args[0]
+            "country": args[0]||"Malaysia"
         }).end((res: any) => {
             if (res.error) throw new Error(res.error)   
             const object = JSON.parse(res.body)
