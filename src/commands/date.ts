@@ -41,7 +41,7 @@ export function setDate(client: Discord.Client){
   countdown(client);
   if(interval==false){
     interval=true;
-    setInterval(function(){countdown(client)}, 60000);
+    setInterval(function(){countdown(client)}, 310000);
   }
 }
 async function countdown(client:Discord.Client){ 
